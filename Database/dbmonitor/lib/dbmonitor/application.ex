@@ -10,6 +10,7 @@ defmodule Dbmonitor.Application do
     children = [
       # Starts a worker by calling: Dbmonitor.Worker.start_link(arg)
       # {Dbmonitor.Worker, arg}
+      Dbmonitor.Repo,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
