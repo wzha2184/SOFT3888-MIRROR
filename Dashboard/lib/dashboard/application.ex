@@ -18,6 +18,8 @@ defmodule Dashboard.Application do
       DashboardWeb.Endpoint
       # Start a worker by calling: Dashboard.Worker.start_link(arg)
       # {Dashboard.Worker, arg}
+
+      # Dashboard.Dbmonitor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
