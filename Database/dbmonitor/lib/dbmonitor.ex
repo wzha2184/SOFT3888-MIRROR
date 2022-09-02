@@ -14,7 +14,7 @@ defmodule Dbmonitor do
       Repo.insert(a)
     end
   end
-  # Example of insertion:
+  # Example of insertion from terminal:
   # Create data and store as a map:
   #   a = %Dbmonitor.Dbmonitor.Criticalsens{cpufan: "1000", cpuopt: "0"}
   # Call insertion command:
