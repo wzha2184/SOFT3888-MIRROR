@@ -1,6 +1,6 @@
 import Config
 
-config :dbmonitor, :"Elixir.Dbmonitor.repo",
+config :dbmonitor, Dbmonitor.Repo,
   database: "postgres",
   username: "postgres",
   password: "postgres",
