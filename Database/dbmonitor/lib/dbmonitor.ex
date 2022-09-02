@@ -2,6 +2,12 @@ defmodule Dbmonitor do
   @moduledoc """
   Documentation for `Dbmonitor`.
   """
+    # Example of insertion from terminal:
+    # Create data and store as a map:
+    #   a = %Dbmonitor.Dbmonitor.Criticalsens{cpufan: "1000", cpuopt: "0"}
+    # Call insertion command:
+    #   Dbmonitor.Repo.insert(a)
+  defmodule Criticalsens do
     use Ecto.Schema
     alias Dbmonitor.Repo
     schema "criticalsens" do
@@ -10,12 +16,8 @@ defmodule Dbmonitor do
     end
 
     def insertS do
-      a = %Dbmonitor{cpufan: "1000", cpuopt: "0"}
+      a = %Criticalsens{cpufan: "2000", cpuopt: "2300"}
       Repo.insert(a)
     end
   end
-  # Example of insertion from terminal:
-  # Create data and store as a map:
-  #   a = %Dbmonitor.Dbmonitor.Criticalsens{cpufan: "1000", cpuopt: "0"}
-  # Call insertion command:
-  #   Dbmonitor.Repo.insert(a)
+end
