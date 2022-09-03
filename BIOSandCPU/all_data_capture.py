@@ -146,7 +146,7 @@ for div in CPU_info:
         value = div.text
     if " ".join(div.get("class")) == "sensor-title":
         name = div.text
-    
+
     if name is not None and value is not None:
         result["critical_sensors"][name] = value
         name = None
@@ -172,7 +172,7 @@ for row in normal_info:
             result["normal_sensors"][state[0]] = state[1]
             state = []
 
-# Return CPU frequency as a named tuple including current, min and max frequencies expressed in Mhz. 
+# Return CPU frequency as a named tuple including current, min and max frequencies expressed in Mhz.
 """
 scpufreq(current=2024.5329375, min=1400.0, max=2900.0)
 """
@@ -193,7 +193,7 @@ result['On Board Devices'] = {}
 devices = subprocess.check_output('sudo dmidecode -t 10'.split(' ')).decode()
 if not ("Type" in devices):
     pass
-else: 
+else:
     types = [m.start() for m in re.finditer('Type', devices)]
     next_start = [m.start() for m in re.finditer('On Board Device', devices)]
     for i in range(0, len(types) - 1):
@@ -264,7 +264,7 @@ else:
 print(result)
 print(json.dumps(result, indent=2))
 
+
 # Haven't finished hardware control part
 
 # For the current logging, we may use lm-sensors in the future
-

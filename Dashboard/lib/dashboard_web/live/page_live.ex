@@ -6,6 +6,7 @@ defmodule DashboardWeb.PageLive do
   alias Dashboard.Repo
 
 
+
   def render(assigns) do
     ~H"""
       <%= DashboardWeb.Layout.render(assigns) %>
@@ -50,8 +51,12 @@ defmodule DashboardWeb.PageLive do
     changeset = Cpu.changeset(%Cpu{}, params)
     IO.inspect(changeset)
 
-    # Repo.
     Repo.insert(changeset)
+
+    result = Dashboard.get_all_data_capture()
+    # IO.puts result
+    {status, list} = JSON.decode(result)
+    IO.inspect(list["normal_sensors"]["+12V"])
 
     time = time()
     {
