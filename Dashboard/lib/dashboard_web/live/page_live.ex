@@ -1,16 +1,22 @@
 defmodule DashboardWeb.PageLive do
   use DashboardWeb, :live_view
 
+  alias Dashboard.Database.Cpu
+
+  alias Dashboard.Repo
+
+
   def render(assigns) do
     ~H"""
       <%= DashboardWeb.Layout.render(assigns) %>
     """
   end
 
+  @spec mount(any, any, Phoenix.LiveView.Socket.t()) :: {:ok, any}
   def mount(_params, _session, socket) do
     # DashboardWeb.Endpoint.subscribe(topic)
     tref = if connected?(socket) do
-      schedule_refresh(1000, %{tref: nil})
+      schedule_refresh(500, %{tref: nil})
     end
     {
     :ok,
@@ -39,6 +45,14 @@ defmodule DashboardWeb.PageLive do
   end
 
   def handle_event("start-button", _, socket) do
+    # CreateCpu.change()
+    params = %{CPU_FAN: "1000RPM", CPU_OPT: "1300RPM", CPU_ECC: "Presence Detected", Memory_Train_ERR: "N/A", Watchdog2: "N/A"}
+    changeset = Cpu.changeset(%Cpu{}, params)
+    IO.inspect(changeset)
+
+    # Repo.
+    Repo.insert(changeset)
+
     time = time()
     {
     :noreply,
