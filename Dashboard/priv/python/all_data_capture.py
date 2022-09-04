@@ -1,3 +1,6 @@
+import json
+import random
+
 result_example = """
 {
   "critical_sensors": {
@@ -82,6 +85,15 @@ result_example = """
   }
 }
 """
+def get_format_example():
+  json_object = json.loads(result_example)
+
+  json_object["critical_sensors"]["CPU_FAN"] = str(int(round(random.uniform(700,2200), 0)))+"RPM"
+  json_object["critical_sensors"]["CPU_OPT"] = str(int(round(random.uniform(1000,2500), 0)))+"RPM"
+  json_object["cpu_freq"]["cpu_current_freq"] = round(random.uniform(2200,3900), 8)
+  ran_example = json.dumps(json_object)
+  print(ran_example)
+  return ran_example
 
 # from selenium import webdriver
 # from time import sleep
@@ -270,3 +282,5 @@ def get_result():
 # Haven't finished hardware control part
 
 # For the current logging, we may use lm-sensors in the future
+
+get_format_example()

@@ -12,6 +12,10 @@ defmodule Dashboard do
     call_python(:all_data_capture, :get_result, [])
   end
 
+  def get_random_data() do
+    call_python(:all_data_capture, :get_format_example, [])
+  end
+
   defp default_instance() do
     #Load all modules in our priv/python directory
     path = [:code.priv_dir(:dashboard), "python"]

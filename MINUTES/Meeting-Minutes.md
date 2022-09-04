@@ -11,8 +11,8 @@
 
 
 - `plans/needs to be completed before the next meeting`
-    - [ ] Self-learning Elixir
-    - [ ] Self-learning Phoenix LiveView
+    - [x] Self-learning Elixir
+    - [x] Self-learning Phoenix LiveView
 
 
 - Reminder
