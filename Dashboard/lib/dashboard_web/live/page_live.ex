@@ -18,7 +18,7 @@ defmodule DashboardWeb.PageLive do
   def mount(_params, _session, socket) do
     # DashboardWeb.Endpoint.subscribe(topic)
     tref = if connected?(socket) do
-      schedule_refresh(1000, %{tref: nil})
+      schedule_refresh(500, %{tref: nil})
     end
     {
     :ok,
@@ -40,6 +40,12 @@ defmodule DashboardWeb.PageLive do
     |> assign(cpu_current_freg_latest: get_cpu_current_freg_latest)
     |> assign(cpu_min_freq: get_cpu_min_freq)
     |> assign(cpu_max_freq: get_cpu_max_freq)
+    |> assign(cpu_fan_random: Enum.random(700..2200))
+    |> assign(cpu_opt_random: Enum.random(1000..2500))
+    |> assign(cpu_current_freg_random: Enum.random(2200..3900))
+
+
+
 
   end
 
@@ -196,7 +202,8 @@ defmodule DashboardWeb.PageLive do
 
   def handle_info(:refresh, socket) do
     {:noreply, assign(socket, time: time, uptime: uptime,
-    available_core: available_core, available_mem: get_memory, disk_space: get_disk_space)}
+    available_core: available_core, available_mem: get_memory, disk_space: get_disk_space,
+    cpu_fan_random: Enum.random(700..2200), cpu_opt_random: Enum.random(1000..2500), cpu_current_freg_random: Enum.random(2200..3900))}
   end
 
   # defp username do

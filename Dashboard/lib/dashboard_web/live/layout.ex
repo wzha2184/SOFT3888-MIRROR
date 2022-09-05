@@ -48,9 +48,9 @@ defmodule DashboardWeb.Layout do
 
       <tr>
         <td class="bold">Local Database Dynamic</td>
-        <td><%=  %></td>
-        <td> <%= %> </td>
-        <td><%= %></td>
+        <td><%= @cpu_fan_random %></td>
+        <td> <%= @cpu_opt_random %> </td>
+        <td><%= @cpu_current_freg_random %></td>
         <td><%= @cpu_min_freq %></td>
         <td><%= @cpu_max_freq %></td>
       </tr>
