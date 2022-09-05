@@ -13,7 +13,7 @@ print("Memory Free: ",info.free)
 print("Memory Used: ",info.used)
 
 print("Temperature is %d C"%nvmlDeviceGetTemperature(handle,0))
-# print("Fan speed is ",nvmlDeviceGetFanSpeed(handle))
+print("Fan speed is ",nvmlDeviceGetFanSpeed(handle))
 print("Power status",nvmlDeviceGetPowerState(handle))
 
 
