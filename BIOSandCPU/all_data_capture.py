@@ -43,7 +43,7 @@
     }
   },
   "PCIe information": {
-    "System Slot  1": {
+    "System Slot 1": {
       "Designation": "PCIEX16_1",
       "Type": "x16 PCI Express",
       "Current Usage": "In Use",
@@ -52,7 +52,7 @@
       "Characteristics": "3.3 V is provided, Opening is shared, PME signal is supported",
       "Bus Address": "0000:00:00.0"
     },
-    "System Slot  2": {
+    "System Slot 2": {
       "Designation": "PCIEX16_2",
       "Type": "x8 PCI Express",
       "Current Usage": "In Use",
@@ -61,7 +61,7 @@
       "Characteristics": "3.3 V is provided, Opening is shared, PME signal is supported",
       "Bus Address": "0000:00:00.0"
     },
-    "System Slot  3": {
+    "System Slot 3": {
       "Designation": "PCIEX16_3",
       "Type": "x16 PCI Express",
       "Current Usage": "In Use",
@@ -242,9 +242,6 @@ else:
         result['PCIe information'][slot][bus_address[0]] = bus_address[1]
     slot = "System Slot " + str(len(designations))
     result['PCIe information'][slot] = {}
-    print(designations)
-    print(designations[-1])
-    print(characteristics[-1])
     first_five = s[designations[-1]:characteristics[-1]].strip().split("\n\t")
     for attribute in first_five:
         key = attribute.split(": ")[0]
