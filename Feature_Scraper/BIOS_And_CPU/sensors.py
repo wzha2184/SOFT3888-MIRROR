@@ -21,8 +21,6 @@ Battery:
     plugged in: yes
 """
 
-from __future__ import print_function
-
 import psutil
 
 
