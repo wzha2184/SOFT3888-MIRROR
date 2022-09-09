@@ -11,8 +11,26 @@ defmodule DashboardWeb.PageLive do
 
   def render(assigns) do
     ~H"""
-      <%= DashboardWeb.Layout.render(assigns) %>
+      <%= DashboardWeb.PageLayout.render(assigns) %>
+      <sectoin>
+      <div>
+      <!--
+      Set the hooks.
 
+      In this LiveView, it is the responsibility of Javascript to update the chart,
+      so it is prevented in advance by `phx-update="ignore"`
+
+      to prevent LiveView from updating the chart.
+
+      <canvas
+        id="chart-canvas"
+        phx-update="ignore"
+        phx-hook="LineChart"></canvas>
+                    -->
+
+      </div>
+
+      </sectoin>
 
     """
   end
@@ -176,9 +194,9 @@ defmodule DashboardWeb.PageLive do
       :noreply,
       assign(
       socket,
-      cpu_fan_latest: get_latest_cpu_fan,
-      cpu_opt_latest: get_latest_cpu_opt,
-      cpu_current_freg_latest: get_cpu_current_freg_latest)}
+      cpu_fan_latest: get_latest_cpu_fan(),
+      cpu_opt_latest: get_latest_cpu_opt(),
+      cpu_current_freg_latest: get_cpu_current_freg_latest())}
   end
 
   # def handle_event("guess", %{"number" => guess}=data, socket) do
@@ -211,17 +229,19 @@ defmodule DashboardWeb.PageLive do
   end
 
   def handle_info(:update_chart, socket) do
-    # Generate dummy data and trigger "new-point" event
-    {:noreply,
-     Enum.reduce(1..5, socket, fn i, acc ->
-       push_event(
-         acc,
-         "new-point",
-         %{label: "User #{i}", value: Enum.random(50..150) + i * 10}
-       )
-     end)}
-    #  {:noreply,
-    #  push_event(socket, "new-point", %{label: "User 1", value: Enum.random(50..150)})}
+    # # Generate dummy data and trigger "new-point" event
+    # {:noreply,
+    #  Enum.reduce(1..5, socket, fn i, acc ->
+    #    push_event(
+    #      acc,
+    #      "new-point",
+    #      %{label: "User #{i}", value: Enum.random(50..150) + i * 10}
+    #    )
+    #  end)}
+
+
+     {:noreply,
+     push_event(socket, "new-point", %{label: "Memory Usage", value: Enum.random(700..2200)})}
   end
 
   # defp username do

@@ -45,8 +45,8 @@ export default class {
           },
           y: {
             // If you tell Chart.js the range of the Y-axis ahead of time, the chart will update smoothly.
-            suggestedMin: 50,
-            suggestedMax: 200
+            suggestedMin: 600,
+            suggestedMax: 2300
           }
         }
       }
