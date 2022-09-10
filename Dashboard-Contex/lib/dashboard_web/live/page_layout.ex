@@ -102,7 +102,7 @@ defmodule DashboardWeb.PageLayout do
 
     <main class="content-wrap">
       <header class="content-head">
-        <h1>Inforamtion</h1>
+        <h1>Basic Inforamtion</h1>
 
         <div class="action">
           <button>
@@ -378,15 +378,11 @@ defmodule DashboardWeb.PageLayout do
     </main>
   </div>
   <style>
-  * {
-    box-sizing: border-box;
-  }
-  html,
+
   body {
     color: #99a0b0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
     background: #151B22;<! -- f5f5fa -->
     font-size: 16px;
     line-height: 120%;
@@ -470,7 +466,7 @@ defmodule DashboardWeb.PageLayout do
     border-right: 1px solid #ede8f0;
   }
   .menu-wrap .user {
-    height: 80px;
+    height: 150px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -481,22 +477,21 @@ defmodule DashboardWeb.PageLayout do
     width: 110px;
     height: 70px;
     border-radius: 100%;
-    overflow: hidden;
   }
   .menu-wrap .user .user-avatar img {
     display: block;
     width: 100%;
-    height: 100%;
-    -o-object-fit: cover;
-       object-fit: cover;
+    height: 90%;
+    # -o-object-fit: cover;
+    #    object-fit: cover;
   }
   .menu-wrap .user figcaption {
-    margin: 5;
-    padding: 0 0 0 1em;
+    margin: 3;
+    padding: 0 0 0 0.5em;
     color: #fff; <!--516F91 1b253d  -->
-    font-weight: 700;
-    font-size: 1.05em;
-    line-height: 100%;
+    font-weight: 900;
+    font-size: 1.1em;
+    line-height: 130%;
   }
   .menu-wrap nav {
     display: block;
@@ -508,20 +503,20 @@ defmodule DashboardWeb.PageLayout do
   }
   .menu-wrap nav h3 {
     margin: 0;
-    font-size: 1.475em;
+    font-size: 1.675em;
     text-transform: uppercase;
     color: #fff;
-    font-weight: 600;
+    font-weight: 900;
   }
   .menu-wrap nav ul {
     display: block;
     padding: 0;
-    margin: 0;
+    margin: 2;
   }
   .menu-wrap nav li {
     display: block;
     padding: 0;
-    margin: 1em 0 0;
+    margin: 1.4em 0 0;
   }
   .menu-wrap nav li a {
     display: flex;
@@ -530,8 +525,8 @@ defmodule DashboardWeb.PageLayout do
     color: #99a0b0;
     text-decoration: none;
     font-weight: 600;
-    font-size: 1.275em;
-    transition: color 0.3s ease;
+    font-size: 1.475em;
+    transition: color 0.4s ease;
   }
   .menu-wrap nav li a svg {
     display: block;
@@ -567,7 +562,7 @@ defmodule DashboardWeb.PageLayout do
     justify-content: space-between;
   }
   .content-wrap .content-head h1 {
-    font-size: 1.375em;
+    font-size: 2.175em;
     line-height: 100%;
     color: #fff; <!-- #1b253d -->
     font-weight: 500;
@@ -601,14 +596,14 @@ defmodule DashboardWeb.PageLayout do
     grid-gap: 2em;
   }
   .content-wrap .info-boxes .info-box {
-    background: #fff;
+    background: #F4F6F7;
     height: 160px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     padding: 0 3em;
     border: 1px solid #ede8f0;
-    border-radius: 5px;
+    border-radius: 20px;
   }
   .content-wrap .info-boxes .info-box .box-icon svg {
     display: block;
@@ -640,12 +635,12 @@ defmodule DashboardWeb.PageLayout do
     grid-gap: 2em;
   }
   .content-wrap .person-boxes .person-box {
-    background: #fff;
+    background: #F4F6F7;
     height: 320px;
     text-align: center;
     padding: 3em;
     border: 1px solid #ede8f0;
-    border-radius: 5px;
+    border-radius: 20px;
   }
   .content-wrap .person-boxes .person-box:nth-child(2n) .box-avatar .no-name {
     background: #4b84fe;
@@ -726,6 +721,7 @@ defmodule DashboardWeb.PageLayout do
     fill: #2b3a60;
   }
   </style>
+
     """
   end
 end
