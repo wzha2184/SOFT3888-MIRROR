@@ -269,7 +269,7 @@ defmodule DashboardWeb.PageLive do
 
   # Refresh method Update methods
   def handle_info(:refresh, socket) do
-    # ##cpu_info table
+    # #cpu_info table
     # {_, list} = JSON.decode(Dashboard.get_random_data())
 
     # changeset = Cpu.changeset(%Cpu{}, list["critical_sensors"])
