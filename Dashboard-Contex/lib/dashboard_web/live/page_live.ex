@@ -8,36 +8,33 @@ defmodule DashboardWeb.PageLive do
 
   import Contex
 
-
-
-
-
   def render(assigns) do
-    ~H"""
-      <%= DashboardWeb.PageLayout.render(assigns) %>
-      <sectoin>
-      <div>
+    Phoenix.View.render(DashboardWeb.PageView, "index.html", assigns)
+    # ~H"""
+    #   <%= DashboardWeb.PageLayout.render(assigns) %>
+    #   <sectoin>
+    #   <div>
 
-      <!--
-      This is used to test chart
-      Set the hooks.
+    #   <!--
+    #   This is used to test chart
+    #   Set the hooks.
 
-      In this LiveView, it is the responsibility of Javascript to update the chart,
-      so it is prevented in advance by `phx-update="ignore"`
+    #   In this LiveView, it is the responsibility of Javascript to update the chart,
+    #   so it is prevented in advance by `phx-update="ignore"`
 
-      to prevent LiveView from updating the chart.
+    #   to prevent LiveView from updating the chart.
 
-      <canvas
-        id="chart-canvas"
-        phx-update="ignore"
-        phx-hook="LineChart"></canvas>
-                    -->
+    #   <canvas
+    #     id="chart-canvas"
+    #     phx-update="ignore"
+    #     phx-hook="LineChart"></canvas>
+    #                 -->
 
-      </div>
+    #   </div>
 
-      </sectoin>
+    #   </sectoin>
 
-    """
+    # """
   end
 
   @spec mount(any, any, Phoenix.LiveView.Socket.t()) :: {:ok, any}
@@ -62,7 +59,6 @@ defmodule DashboardWeb.PageLive do
     |> assign(uptime: uptime())
     |> assign(available_core: available_core())
     |> assign(available_mem: get_memory())
-    |> assign(disk_space: get_disk_space())
     |> assign(cpu_fan_latest: get_latest_cpu_fan())
     |> assign(cpu_opt_latest: get_latest_cpu_opt())
     |> assign(cpu_current_freg_latest: get_cpu_current_freg_latest())
@@ -71,7 +67,7 @@ defmodule DashboardWeb.PageLive do
     |> assign(cpu_fan_random: Enum.random(700..2200))
     |> assign(cpu_opt_random: Enum.random(1000..2500))
     |> assign(cpu_current_freg_random: Enum.random(2200..3900))
-    |> assign(cpu_chart_svg: get_cpu_chart())
+    |> assign(cpu_chart_svg: get_cpu_chart(5))
 
 
   end
@@ -106,8 +102,8 @@ defmodule DashboardWeb.PageLive do
 
   end
 
-  def get_cpu_chart() do
-    cpu_freq = get_cpu_freq()
+  def get_cpu_chart(info_num) do
+    cpu_freq = get_cpu_freq(info_num)
     plot_options = %{
       top_margin: 5,
       right_margin: 5,
@@ -119,7 +115,6 @@ defmodule DashboardWeb.PageLive do
       x_label: "Time",
       legend_setting: :legend_right,
       mapping: %{x_col: "timestamp", y_cols: ["cpu_current_freq", "cpu_min_freq", "cpu_max_freq"]},
-
     }
     # Generate the SVG chart
     cpu_chart =
@@ -157,11 +152,17 @@ defmodule DashboardWeb.PageLive do
       # |>Contex.Plot.to_svg()
 
     cpu_chart
-
-
-
-
   end
+
+  # defp assign_chart(%{assigns: %{dataset: dataset}} = socket) do
+  #   socket
+  #   |> assign(
+  #     :cpu_chart_svg,
+  #     dataset
+  #     |> Contex.LinePlot.new()
+  #     |> Contex.LinePlot.colours(:warm))
+  #     |> Contex.LinePlot.event_handler("update")
+  # end
 
   def time() do
     DateTime.utc_now |> to_string
@@ -179,20 +180,6 @@ defmodule DashboardWeb.PageLive do
 
   def get_memory() do
     :erlang.memory(:total)
-  end
-
-  def get_disk_space() do
-    :application.start(:sasl)
-    :application.start(:os_mon)
-    [
-      {_, disk_data, _},
-      {_, _, _},
-      {_, _, _},
-      {_, _, _},
-      {_, _, _},
-      {_, _, _}
-    ] = :disksup.get_disk_data()
-    disk_data
   end
 
   def get_latest_cpu_fan() do
@@ -297,9 +284,9 @@ defmodule DashboardWeb.PageLive do
     # Repo.insert(changeset)
 
     {:noreply, assign(socket, time: time(), uptime: uptime(),
-    available_core: available_core(), available_mem: get_memory(), disk_space: get_disk_space(),
+    available_core: available_core(), available_mem: get_memory(),
     cpu_fan_random: Enum.random(700..2200), cpu_opt_random: Enum.random(1000..2500),
-    cpu_current_freg_random: Enum.random(2200..3900), cpu_chart_svg: get_cpu_chart())}
+    cpu_current_freg_random: Enum.random(2200..3900), cpu_chart_svg: get_cpu_chart(5))}
   end
 
   ## This is JavaScript chart handle refresh event
