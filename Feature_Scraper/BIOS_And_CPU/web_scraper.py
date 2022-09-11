@@ -41,11 +41,13 @@ class WebAccesser:
 
 
 class WebScraper:
-    def __init__(self, BMC_url: str) -> None:
+    def __init__(self, machine_name: str, BMC_url: str) -> None:
         self.web_acceccer = WebAccesser(BMC_url)
+        self.machin_name = machine_name
 
         self.result = {}
-        self.result["CPU"] = {}
+        self.result["BMC"] = {}
+        self.result["BMC"][machine_name] = {}
 
         self.get_cpu_info()
 
@@ -81,7 +83,7 @@ class WebScraper:
                 name = div.text
 
             if name is not None and value is not None:
-                self.result["CPU"][name] = value
+                self.result["BMC"][self.machin_name][name] = value.split(" ")[0].replace("RPM", "")
                 name = None
                 value = None
 
@@ -93,7 +95,7 @@ class WebScraper:
                 if col.get("class") is None or "".join(col.get("class")) != "hide":
                     state.append(col.text.strip())
                 if len(state) == 2:
-                    self.result["CPU"][state[0]] = state[1]
+                    self.result["BMC"][self.machin_name][state[0]] = state[1].split(" ")[0].replace("RPM", "")
                     state = []
 
         normal_info = normal_sensors.find_all("tr")
@@ -102,11 +104,11 @@ class WebScraper:
             for col in row.find_all("td"):
                 state.append(col.text.strip())
                 if len(state) == 2:
-                    self.result["CPU"][state[0]] = state[1]
+                    self.result["BMC"][self.machin_name][state[0]] = state[1].split(" ")[0].replace("RPM", "")
                     state = []
 
 
 if __name__ == "__main__":
-    web_scraper = WebScraper("https://192.168.10.108")
+    web_scraper = WebScraper("BMC1", "https://192.168.10.108")
     print(json.dumps(web_scraper.get_bmc_result(), indent=2))
 

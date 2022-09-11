@@ -1,4 +1,3 @@
-import imp
 import re
 import psutil
 import subprocess
@@ -9,9 +8,8 @@ class SuperclusterScraper:
         self.result["CPU"] = {}
         self.result["BIOS"] = {}
 
-        self.get_all_supercluster_result
-
     def get_supercluster_result(self) -> dict:
+        self.get_all_supercluster_result()
         return self.result
 
     def get_all_supercluster_result(self) -> None:
@@ -116,3 +114,6 @@ class SuperclusterScraper:
             self.result["BIOS"]['PCIe information'][slot][bus_address[0]] = bus_address[1]
 
     
+if __name__ == "__main__":
+    supercluser_scraper = SuperclusterScraper()
+    print(supercluser_scraper.get_all_supercluster_result())
