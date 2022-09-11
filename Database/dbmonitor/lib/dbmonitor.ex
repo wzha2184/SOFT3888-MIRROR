@@ -27,4 +27,29 @@ defmodule Dbmonitor do
       Repo.all(query)
     end
   end
+
+  defmodule GPUINFO do
+    use Ecto.Schema
+    alias Dbmonitor.Repo
+    import Ecto.Query
+    schema "gpuinfo" do
+      field :gpuuid, :binary_id
+      field :serialnum, :string, default: "N/A"
+      field :temperature, :integer
+      field :fanspeed, :integer
+      field :watts, :integer
+      field :timestamp, :naive_datetime
+    end
+
+    def insertgpuinfo do
+      a = %GPUINFO{gpuuid: "2000"}
+      Repo.insert!(a)
+    end
+
+    def getAllDataGPU do
+      query = from u in "gpuinfo",
+      select: {u.gpuuid}
+      Repo.all(query)
+    end
+  end
 end
