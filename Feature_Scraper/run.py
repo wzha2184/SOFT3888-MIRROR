@@ -1,5 +1,4 @@
 import paramiko
-import sys
 import json
 import os
 from BMC.web_scraper import WebScraper
