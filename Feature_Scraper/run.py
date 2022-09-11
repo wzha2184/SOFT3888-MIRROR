@@ -4,7 +4,7 @@ import json
 import os
 from BMC.web_scraper import WebScraper
 
-def get_bmc_result(url_config: str):
+def get_bmc_result(url_config: str) -> dict:
     with open(url_config, "r") as jc:
         config = json.load(jc)
         bmc_url = config["BMC"]
@@ -17,7 +17,7 @@ def get_bmc_result(url_config: str):
         return result
 
 
-def get_supercluster_result(username: str, password: str, url_config: str):
+def get_supercluster_result(username: str, password: str, url_config: str) -> dict:
     with open(url_config, "r") as jc:
         config = json.load(jc)
 
@@ -27,7 +27,7 @@ def get_supercluster_result(username: str, password: str, url_config: str):
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ssh.connect(sc_url[sc], username=username, password=password)
-            path = os.path.join("Feature_Scraper", "BIOS_And_CPU")
+            path = os.path.join("Feature_Scraper", "Supercluster")
             ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command('cd {}; echo 6r7mYcxLHXLq8Rgu | sudo -S -k python3 supercluster_scraper.py'.format(path))
             
             str_result = ssh_stdout.read().decode('utf-8').replace("\'", "\"")
