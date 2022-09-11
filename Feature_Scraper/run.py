@@ -2,9 +2,7 @@ import paramiko
 import sys
 import json
 import os
-from BIOS_And_CPU.supercluster_scraper import SuperclusterScraper
-from BIOS_And_CPU.web_scraper import WebScraper
-from GPU.gpu_scraper import GPUScraper
+from BMC.web_scraper import WebScraper
 
 def get_bmc_result(url_config: str):
     with open(url_config, "r") as jc:

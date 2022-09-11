@@ -1,5 +1,5 @@
-from Feature_Scraper.Supercluster.gpu_scraper import GPUScraper
-from Feature_Scraper.Supercluster.shell_scraper import ShellScraper, SuperclusterScraper
+from Supercluster.gpu_scraper import GPUScraper
+from Supercluster.shell_scraper import ShellScraper
 
 
 def run():
