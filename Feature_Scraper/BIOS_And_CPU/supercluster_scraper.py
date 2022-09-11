@@ -109,11 +109,11 @@ class SuperclusterScraper:
             if len(chars1) > 0:
                 chars1 = chars1[:-2]
 
-            self.result["BIOS"]['PCIe information'][slot]['Characteristics'] = chars1
+            self.result["BIOS"]['PCIe information'][slot]['Characteristics'] = chars1.strip()
             bus_address = s[bus_addresses[-1]:].strip().split(": ")
             self.result["BIOS"]['PCIe information'][slot][bus_address[0]] = bus_address[1]
 
     
 if __name__ == "__main__":
     supercluser_scraper = SuperclusterScraper()
-    print(supercluser_scraper.get_all_supercluster_result())
+    print(supercluser_scraper.get_supercluster_result())
