@@ -1,5 +1,5 @@
-from Supercluster.gpu_scraper import GPUScraper
-from Supercluster.shell_scraper import ShellScraper
+from gpu_scraper import GPUScraper
+from shell_scraper import ShellScraper
 
 
 def get_supercluster_result() -> dict:
