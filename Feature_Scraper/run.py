@@ -1,4 +1,5 @@
 import paramiko
+import sys
 import json
 import os
 from BMC.web_scraper import WebScraper
@@ -26,9 +27,10 @@ def get_supercluster_result(username: str, password: str, url_config: str) -> di
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ssh.connect(sc_url[sc], username=username, password=password)
-            path = os.path.join("Feature_Scraper", "Supercluster")
+
+            path = "Feature_Scraper/Supercluster"
             ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command('cd {}; echo 6r7mYcxLHXLq8Rgu | sudo -S -k python3 supercluster_scraper.py'.format(path))
-            
+
             str_result = ssh_stdout.read().decode('utf-8').replace("\'", "\"")
             json_result = json.loads(str_result)
             result.update(json_result)

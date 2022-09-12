@@ -17,7 +17,7 @@ class WebAccesser:
         self._options.add_argument('--headless')
         self._options.add_argument('--disable-dev-shm-usage')
 
-        self.driver =  webdriver.Chrome(ChromeDriverManager().install(), options=self._options)
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self._options)
         
     def login(self) -> None:
         self.driver.get(self.url + '/#login')
