@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/BIOSandCPU.iml" filepath="$PROJECT_DIR$/.idea/BIOSandCPU.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Feature_Scraper.iml" filepath="$PROJECT_DIR$/.idea/Feature_Scraper.iml" />
     </modules>
   </component>
 </project>
