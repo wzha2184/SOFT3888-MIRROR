@@ -1,7 +1,6 @@
 import paramiko
 import sys
 import json
-import os
 from BMC.web_scraper import WebScraper
 
 def get_bmc_result(url_config: str) -> dict:
@@ -29,13 +28,18 @@ def get_supercluster_result(username: str, password: str, url_config: str) -> di
             ssh.connect(sc_url[sc], username=username, password=password)
 
             path = "Feature_Scraper/Supercluster"
-            ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command('cd {}; echo 6r7mYcxLHXLq8Rgu | sudo -S -k python3 supercluster_scraper.py'.format(path))
+            command = "cd {path}; echo 6r7mYcxLHXLq8Rgu | sudo -S -k python3 supercluster_scraper.py {username} {password}".format(
+                path=path, 
+                username=username,
+                password=password)
+            ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command()
 
             str_result = ssh_stdout.read().decode('utf-8').replace("\'", "\"")
             json_result = json.loads(str_result)
             result.update(json_result)
 
         return result
+
 
 def get_result(username: str, password: str, url_config: str):
     result = get_bmc_result(url_config)
@@ -44,7 +48,11 @@ def get_result(username: str, password: str, url_config: str):
 
 
 if __name__ == "__main__":
-    username = "usyd-10a"
-    password="6r7mYcxLHXLq8Rgu"
-
-    print(get_result(username, password, "url_config.json"))
+    if len(sys.argv) != 4:
+        print("Invalid arguments!")
+    else:
+        username = sys.argv[1]
+        password = sys.argv[2]
+        config_path = sys.argv[3]
+        
+        print(get_result(username, password, config_path))
