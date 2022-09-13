@@ -1,4 +1,10 @@
-# Dashboard/Front-end
+# USYD10-A Data Center Monitor Dashboard
+
+## Preparation
+  * [`Elixir`](https://elixir-lang.org/install.html) Installed
+  * Setup [`PostgreSQL`](https://www.postgresql.org/download/) and start [`PostgreSQL`](https://www.postgresql.org/) server
+  * `Python 3.6+` Installed
+    * python dependencies installed
 
 ## To start Dashboard Phoenix server:
   * `cd Dashboard-Contex`
