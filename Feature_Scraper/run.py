@@ -27,12 +27,12 @@ def get_supercluster_result(username: str, password: str, url_config: str) -> di
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ssh.connect(sc_url[sc], username=username, password=password)
 
-            path = "Feature_Scraper/Supercluster"
+            path = "soft3888_tu12_04_re_p39/Feature_Scraper/Supercluster"
             command = "cd {path}; echo 6r7mYcxLHXLq8Rgu | sudo -S -k python3 supercluster_scraper.py {username} {password}".format(
                 path=path, 
                 username=username,
                 password=password)
-            ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command()
+            ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
 
             str_result = ssh_stdout.read().decode('utf-8').replace("\'", "\"")
             json_result = json.loads(str_result)
