@@ -3,7 +3,7 @@ defmodule Dbmonitor.Repo.Migrations.CreateGpu do
 
   def change do
     create table(:gpuinfo) do
-      add :gpuuid, :binary_id, null: false
+      add :gpuuid, :string, null: false
       add :serialnum, :string, default: "N/A"
       add :temperature, :integer
       add :fanspeed, :integer

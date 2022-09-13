@@ -11,6 +11,7 @@ defmodule Dashboard.Repo.Migrations.CreateBiosPcie do
       add :bios_pcie_id, :decimal
       add :bios_pcie_characteristics, :text
       add :bios_pcie_bus_address, :text
+      timestamps()
 
     end
 

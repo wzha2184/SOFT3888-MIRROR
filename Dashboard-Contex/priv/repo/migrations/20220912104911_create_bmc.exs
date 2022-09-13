@@ -6,9 +6,9 @@ defmodule Dashboard.Repo.Migrations.CreateBmc do
       add :bmc_uid, :decimal
       add :bmc_cpu_fan, :decimal
       add :bmc_cpu_opt, :decimal
-      add :bmc_cpu_ecc, :decimal
-      add :bmc_memory_train_err, :decimal
-      add :bmc_watchdog2, :decimal
+      add :bmc_cpu_ecc, :string
+      add :bmc_memory_train_err, :string
+      add :bmc_watchdog2, :string
       add :bmc_12v, :decimal
       add :bmc_33v_alw, :decimal
       add :bmc_5v, :decimal
