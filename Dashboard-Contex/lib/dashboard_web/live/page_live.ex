@@ -1,38 +1,16 @@
 defmodule DashboardWeb.PageLive do
+    @moduledoc """
+    Main Live Page
+    """
   use DashboardWeb, :live_view
 
-  alias Dashboard.Database.Cpu
-  alias Dashboard.Database.CpuFreq
   alias Dashboard.Repo
-  import Ecto.Query
-
   import Contex
+  import Dashboard.InfoHandler
 
   def render(assigns) do
     Phoenix.View.render(DashboardWeb.PageView, "index.html", assigns)
     # ~H"""
-    #   <%= DashboardWeb.PageLayout.render(assigns) %>
-    #   <sectoin>
-    #   <div>
-
-    #   <!--
-    #   This is used to test chart
-    #   Set the hooks.
-
-    #   In this LiveView, it is the responsibility of Javascript to update the chart,
-    #   so it is prevented in advance by `phx-update="ignore"`
-
-    #   to prevent LiveView from updating the chart.
-
-    #   <canvas
-    #     id="chart-canvas"
-    #     phx-update="ignore"
-    #     phx-hook="LineChart"></canvas>
-    #                 -->
-
-    #   </div>
-
-    #   </sectoin>
 
     # """
   end
@@ -42,7 +20,7 @@ defmodule DashboardWeb.PageLive do
 
     tref = if connected?(socket) do
       schedule_refresh(3000, %{tref: nil})
-
+      schedule_run_script(20000, %{tref: nil})
       ## Use Javascript to make live chart
       # :timer.send_interval(10000, self(), :update_chart)
     end
@@ -53,21 +31,37 @@ defmodule DashboardWeb.PageLive do
   end
 
   def initial_state(socket) do
+    gpu_info = get_gpu_info(2)
+    [head | tail] = gpu_info
+    # IO.inspect Map.fetch(head, :cpu_temp)
+    last_gpu_temp = "N/A"
+    {:ok, last_cpu_temp} = Map.fetch(head, :Temperature)
+
+
+    [bmc_cpu_temp_chart, bmc_lan_temp_chart, bmc_chipset_fan_chart] = get_bmc_charts(5)
+    [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart] = get_gpu_charts(5)
     socket
     |> assign(time: time())
     |> assign(score: 0)
     |> assign(uptime: uptime())
     |> assign(available_core: available_core())
     |> assign(available_mem: get_memory())
-    |> assign(cpu_fan_latest: get_latest_cpu_fan())
-    |> assign(cpu_opt_latest: get_latest_cpu_opt())
-    |> assign(cpu_current_freg_latest: get_cpu_current_freg_latest())
-    |> assign(cpu_min_freq: get_cpu_min_freq())
-    |> assign(cpu_max_freq: get_cpu_max_freq())
     |> assign(cpu_fan_random: Enum.random(700..2200))
     |> assign(cpu_opt_random: Enum.random(1000..2500))
     |> assign(cpu_current_freg_random: Enum.random(2200..3900))
-    |> assign(cpu_chart_svg: get_cpu_chart(5))
+
+    # ## BMC charts currently not available
+    # |> assign(cpu_chart_svg: get_cpu_chart(10))
+    # |> assign(bmc_cpu_temp_svg: bmc_cpu_temp_chart)
+    # |> assign(bmc_lan_temp_svg: bmc_lan_temp_chart)
+    # |> assign(bmc_chipset_fan_svg: bmc_chipset_fan_chart)
+    |> assign(last_gpu_temp: last_cpu_temp)
+
+    ## GPU charts
+    |> assign(gpu_temp_svg: gpu_temp_chart)
+    |> assign(gpu_free_mem_svg: gpu_free_mem_chart)
+    |> assign(gpu_power_svg: gpu_power_chart)
+
 
 
   end
@@ -81,167 +75,35 @@ defmodule DashboardWeb.PageLive do
     end
   end
 
-  def get_cpu_freq(limit \\ 10) do
-    q = from f in CpuFreq,
-        order_by: [desc: f.id],
-        limit: ^limit,
-        select: %{inserted_at: f.inserted_at, cpu_current_freq: f.cpu_current_freq, cpu_max_freq: f.cpu_max_freq, cpu_min_freq: f.cpu_min_freq}
-
-    Repo.all(q)
-    # [
-    #   %Dashboard.Database.CpuFreq{
-    #     __meta__: #Ecto.Schema.Metadata<:loaded, "cpu_freq">,
-    #     cpu_current_freq: #Decimal<3772.77541757>,
-    #     cpu_max_freq: #Decimal<3900>,
-    #     cpu_min_freq: #Decimal<2200>,
-    #     id: 81,
-    #     inserted_at: ~N[2022-09-08 04:23:09],
-    #     updated_at: ~N[2022-09-08 04:23:09]
-    #   }
-    # ]
-
+  def schedule_run_script(interval, %{tref: tref}) do
+    if tref, do: :timer.cancel(tref)
+    case :timer.send_interval(interval, self(), :run_script) do
+      {:ok, tref} -> tref
+      _ -> nil
+    end
   end
 
-  def get_cpu_chart(info_num) do
-    cpu_freq = get_cpu_freq(info_num)
-    plot_options = %{
-      top_margin: 5,
-      right_margin: 5,
-      bottom_margin: 5,
-      left_margin: 5,
-      show_x_axis: true,
-      show_y_axis: true,
-      title: "CPU Freq",
-      x_label: "Time",
-      legend_setting: :legend_right,
-      mapping: %{x_col: "timestamp", y_cols: ["cpu_current_freq", "cpu_min_freq", "cpu_max_freq"]},
-    }
-    # Generate the SVG chart
-    cpu_chart =
-      cpu_freq
-      # Flatten the map into a list of lists
-      |> Enum.map(fn %{inserted_at: timestamp, cpu_current_freq: cpu_current_freq, cpu_min_freq: cpu_min_freq, cpu_max_freq: cpu_max_freq} ->
-        [timestamp, Decimal.to_float(cpu_current_freq), Decimal.to_float(cpu_min_freq), Decimal.to_float(cpu_max_freq)]
-      end)
-
-
-      # [[3772.77, 3900, 2200, ~N[2022-09-08 04:23:09]], [3772.77, 3900, 2200, ~N[2022-09-08 04:24:09]]]
-      # Assign legend titles using list indices
-      |> Contex.Dataset.new(["timestamp", "cpu_current_freq", "cpu_min_freq", "cpu_max_freq"])
-      # Specify plot type (LinePlot), SVG dimensions, column mapping, title, label and legend
-      |> Contex.Plot.new(
-        Contex.LinePlot,
-        600,
-        300,
-        [plot_options: plot_options, title: "CPU Freq",
-        mapping: %{x_col: "timestamp", y_cols: ["cpu_current_freq"]},
-        x_label: "Time",
-      ]
-
-      )
-      # Generate SVG
-      |> Contex.Plot.to_svg()
-
-      # |> Contex.LinePlot.new(
-      #   mapping: %{x_col: "timestamp", y_cols: ["cpu_current_freq", "cpu_min_freq", "cpu_max_freq"]},
-      #   plot_options: plot_options,
-      #   title: "CPU Freq",
-      #   x_label: "Time",
-      #   legend_setting: :legend_right
-      # )
-      # |>Contex.Plot.to_svg()
-
-    cpu_chart
-  end
-
-  # defp assign_chart(%{assigns: %{dataset: dataset}} = socket) do
-  #   socket
-  #   |> assign(
-  #     :cpu_chart_svg,
-  #     dataset
-  #     |> Contex.LinePlot.new()
-  #     |> Contex.LinePlot.colours(:warm))
-  #     |> Contex.LinePlot.event_handler("update")
-  # end
-
-  def time() do
-    DateTime.utc_now |> to_string
-  end
-
-  def uptime() do
-    {uptime, _} = :erlang.statistics(:wall_clock)
-    uptime
-  end
-
-  def available_core() do
-    :erlang.system_info(:logical_processors_online)
-
-  end
-
-  def get_memory() do
-    :erlang.memory(:total)
-  end
-
-  def get_latest_cpu_fan() do
-    query = last(Cpu)
-    [cpu_info_map] = Repo.all(query)
-    {_, cpu_fan} = Map.fetch(cpu_info_map, :CPU_FAN)
-    cpu_fan
-  end
-
-  def get_latest_cpu_opt() do
-    query = last(Cpu)
-    [cpu_info_map] = Repo.all(query)
-    {_, cpu_opt} = Map.fetch(cpu_info_map, :CPU_OPT)
-    cpu_opt
-  end
-
-  def get_cpu_current_freg_latest() do
-    query = last(CpuFreq)
-    [cpu_freq_map] = Repo.all(query)
-    {_, current_freq} = Map.fetch(cpu_freq_map, :cpu_current_freq)
-    current_freq
-  end
-
-  def get_cpu_min_freq() do
-    query = last(CpuFreq)
-    [cpu_freq_map] = Repo.all(query)
-    {_, min_freq} = Map.fetch(cpu_freq_map, :cpu_min_freq)
-    min_freq
-  end
-
-  def get_cpu_max_freq() do
-    query = last(CpuFreq)
-    [cpu_freq_map] = Repo.all(query)
-    {_, max_freq} = Map.fetch(cpu_freq_map, :cpu_max_freq)
-    max_freq
-  end
-
-  def get_last_5_data() do
-    cpu_info_query = from(m0 in Cpu, order_by: [desc: m0.id], limit: 5)
-
-    Repo.all(cpu_info_query)
-  end
 
   def handle_event("add-button", _, socket) do
 
+
     # params = %{CPU_FAN: "1000RPM", CPU_OPT: "1300RPM", CPU_ECC: "Presence Detected", Memory_Train_ERR: "N/A", Watchdog2: "N/A"}
 
-    ##cpu_info table
-    {_, list} = JSON.decode(Dashboard.get_random_data())
+    ##BMC table multi-thread
+    to_database()
 
-    changeset = Cpu.changeset(%Cpu{}, list["critical_sensors"])
+    # changeset = Cpu.changeset(%Cpu{}, list["critical_sensors"])
     # IO.inspect(changeset)
 
-    Repo.insert(changeset)
 
-    #cpu_freq table
-    {_, list} = JSON.decode(Dashboard.get_random_data())
 
-    changeset = CpuFreq.changeset(%CpuFreq{}, list["cpu_freq"])
-    # IO.inspect(changeset)
+    # #cpu_freq table
+    # {_, list} = JSON.decode(get_super_clusters_data)
 
-    Repo.insert(changeset)
+    # # changeset = CpuFreq.changeset(%CpuFreq{}, list["cpu_freq"])
+    # # IO.inspect(changeset)
+
+    # # Repo.insert(changeset)
 
 
     time = time()
@@ -259,10 +121,7 @@ defmodule DashboardWeb.PageLive do
     {
       :noreply,
       assign(
-      socket,
-      cpu_fan_latest: get_latest_cpu_fan(),
-      cpu_opt_latest: get_latest_cpu_opt(),
-      cpu_current_freg_latest: get_cpu_current_freg_latest())}
+      socket, time: time())}
   end
 
 
@@ -286,7 +145,20 @@ defmodule DashboardWeb.PageLive do
     {:noreply, assign(socket, time: time(), uptime: uptime(),
     available_core: available_core(), available_mem: get_memory(),
     cpu_fan_random: Enum.random(700..2200), cpu_opt_random: Enum.random(1000..2500),
-    cpu_current_freg_random: Enum.random(2200..3900), cpu_chart_svg: get_cpu_chart(5))}
+    cpu_current_freg_random: Enum.random(2200..3900))}
+  end
+
+  # Run python script and store in database methods
+  def handle_info(:run_script, socket) do
+    gpu_info = get_gpu_info(2)
+    [head | tail] = gpu_info
+    # IO.inspect Map.fetch(head, :cpu_temp)
+    last_gpu_temp = "N/A"
+    {:ok, last_cpu_temp} = Map.fetch(head, :Temperature)
+    [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart] = get_gpu_charts(5)
+    to_database()
+
+    {:noreply, assign(socket, gpu_temp_svg: gpu_temp_chart, gpu_free_mem_svg: gpu_free_mem_chart, gpu_power_svg: gpu_power_chart, last_gpu_temp: last_cpu_temp)}
   end
 
   ## This is JavaScript chart handle refresh event
