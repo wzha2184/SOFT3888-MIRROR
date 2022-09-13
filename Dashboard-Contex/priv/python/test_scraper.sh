@@ -108,7 +108,7 @@ echo " "
 echo "BIOS: "
 if [[ "$output" =~ .*"BIOS".* ]]; 
 then
-    echo "Catch CPU keyword successfully"
+    echo "Catch BIOS keyword successfully"
     if [[ "$output" =~ .*"baseboard-serial-number".* ]]; 
     then
         echo "Catch baseboard-serial-number successfully"
