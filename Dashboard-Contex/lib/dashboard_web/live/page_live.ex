@@ -31,14 +31,15 @@ defmodule DashboardWeb.PageLive do
   end
 
   def initial_state(socket) do
-    gpu_info = get_gpu_info(2)
-    [head | tail] = gpu_info
-    # IO.inspect Map.fetch(head, :cpu_temp)
-    last_gpu_temp = "N/A"
-    {:ok, last_cpu_temp} = Map.fetch(head, :Temperature)
+    gpu_info = get_gpu_info(1)
+    [last_info] = cond do
+      length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
+      true -> [last_info] = get_gpu_info(1)
+    end
+    {:ok, last_cpu_temp} = Map.fetch(last_info, :Temperature)
 
 
-    [bmc_cpu_temp_chart, bmc_lan_temp_chart, bmc_chipset_fan_chart] = get_bmc_charts(5)
+    # [bmc_cpu_temp_chart, bmc_lan_temp_chart, bmc_chipset_fan_chart] = get_bmc_charts(5)
     [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart] = get_gpu_charts(5)
     socket
     |> assign(time: time())
@@ -150,11 +151,23 @@ defmodule DashboardWeb.PageLive do
 
   # Run python script and store in database methods
   def handle_info(:run_script, socket) do
-    gpu_info = get_gpu_info(2)
-    [head | tail] = gpu_info
-    # IO.inspect Map.fetch(head, :cpu_temp)
-    last_gpu_temp = "N/A"
-    {:ok, last_cpu_temp} = Map.fetch(head, :Temperature)
+    # gpu_info = get_gpu_info(2)
+    # [head | tail] = gpu_info
+    # # IO.inspect Map.fetch(head, :cpu_temp)
+    # last_gpu_temp = "N/A"
+    # {:ok, last_cpu_temp} = Map.fetch(head, :Temperature)
+    # [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart] = get_gpu_charts(5)
+
+
+    gpu_info = get_gpu_info(1)
+    [last_info] = cond do
+      length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
+      true -> [last_info] = get_gpu_info(1)
+    end
+    {:ok, last_cpu_temp} = Map.fetch(last_info, :Temperature)
+
+
+    # [bmc_cpu_temp_chart, bmc_lan_temp_chart, bmc_chipset_fan_chart] = get_bmc_charts(5)
     [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart] = get_gpu_charts(5)
     to_database()
 

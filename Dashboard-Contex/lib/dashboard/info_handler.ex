@@ -134,80 +134,83 @@ defmodule Dashboard.InfoHandler do
 
   def get_gpu_charts(info_num) do
     gpu_info = get_gpu_info(info_num)
+    cond do
+      length(gpu_info) == 0 -> ["gpu_temp_chart", "gpu_free_mem_chart", "gpu_power_chart"]
+      true ->
+      plot_options = %{
+        top_margin: 5,
+        right_margin: 5,
+        bottom_margin: 5,
+        left_margin: 5,
+        show_x_axis: true,
+        show_y_axis: true,
+        legend_setting: :legend_right,
+        mapping: %{x_col: "timestamp", y_cols: ["temp", "total_mem", "free_mem", "power"]},
+      }
+      # Generate the SVG chart
+      contex_dataset =
+        gpu_info
+        # Flatten the map into a list of lists
+        |> Enum.map(fn %{inserted_at: timestamp, Temperature: temp, totalMemory: total_mem, freeMemory: free_mem, power: power} ->
+          [timestamp, Decimal.to_float(temp), Decimal.to_float(total_mem), Decimal.to_float(free_mem), Decimal.to_float(power)]
+        end)
+        # Assign legend titles using list indices
+        |> Contex.Dataset.new(["timestamp", "temp", "total_mem", "free_mem", "power"])
 
-    plot_options = %{
-      top_margin: 5,
-      right_margin: 5,
-      bottom_margin: 5,
-      left_margin: 5,
-      show_x_axis: true,
-      show_y_axis: true,
-      legend_setting: :legend_right,
-      mapping: %{x_col: "timestamp", y_cols: ["temp", "total_mem", "free_mem", "power"]},
-    }
-    # Generate the SVG chart
-    contex_dataset =
-      gpu_info
-      # Flatten the map into a list of lists
-      |> Enum.map(fn %{inserted_at: timestamp, Temperature: temp, totalMemory: total_mem, freeMemory: free_mem, power: power} ->
-        [timestamp, Decimal.to_float(temp), Decimal.to_float(total_mem), Decimal.to_float(free_mem), Decimal.to_float(power)]
-      end)
-      # Assign legend titles using list indices
-      |> Contex.Dataset.new(["timestamp", "temp", "total_mem", "free_mem", "power"])
-
-    gpu_temp_chart =
-      contex_dataset
-      # Specify plot type (LinePlot), SVG dimensions, column mapping, title, label and legend
-      |> Contex.Plot.new(
-        Contex.LinePlot,
-        600,
-        300,
-        [plot_options: plot_options, title: "GPU Temperature",
-        mapping: %{x_col: "timestamp", y_cols: ["temp"]},
-        x_label: "Time",
-        y_label: "Temperature"
-      ]
-
-      )
-      # Generate SVG
-      |> Contex.Plot.to_svg()
-
-      gpu_free_mem_chart =
+      gpu_temp_chart =
         contex_dataset
         # Specify plot type (LinePlot), SVG dimensions, column mapping, title, label and legend
         |> Contex.Plot.new(
           Contex.LinePlot,
           600,
           300,
-          [plot_options: plot_options, title: "GPU Free Memory",
-          mapping: %{x_col: "timestamp", y_cols: ["free_mem"]},
+          [plot_options: plot_options, title: "GPU Temperature",
+          mapping: %{x_col: "timestamp", y_cols: ["temp"]},
           x_label: "Time",
-          y_label: "Free Memory"
+          y_label: "Temperature"
         ]
 
         )
         # Generate SVG
         |> Contex.Plot.to_svg()
 
-      gpu_power_chart =
-        contex_dataset
-        # Specify plot type (LinePlot), SVG dimensions, column mapping, title, label and legend
-        |> Contex.Plot.new(
-          Contex.LinePlot,
-          600,
-          300,
-          [plot_options: plot_options, title: "GPU Power",
-          mapping: %{x_col: "timestamp", y_cols: ["power"]},
-          x_label: "Time",
-          y_label: "Power"
-        ]
+        gpu_free_mem_chart =
+          contex_dataset
+          # Specify plot type (LinePlot), SVG dimensions, column mapping, title, label and legend
+          |> Contex.Plot.new(
+            Contex.LinePlot,
+            600,
+            300,
+            [plot_options: plot_options, title: "GPU Free Memory",
+            mapping: %{x_col: "timestamp", y_cols: ["free_mem"]},
+            x_label: "Time",
+            y_label: "Free Memory"
+          ]
 
-        )
-        # Generate SVG
-        |> Contex.Plot.to_svg()
+          )
+          # Generate SVG
+          |> Contex.Plot.to_svg()
 
-      [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart]
+        gpu_power_chart =
+          contex_dataset
+          # Specify plot type (LinePlot), SVG dimensions, column mapping, title, label and legend
+          |> Contex.Plot.new(
+            Contex.LinePlot,
+            600,
+            300,
+            [plot_options: plot_options, title: "GPU Power",
+            mapping: %{x_col: "timestamp", y_cols: ["power"]},
+            x_label: "Time",
+            y_label: "Power"
+          ]
+
+          )
+          # Generate SVG
+          |> Contex.Plot.to_svg()
+
+        [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart]
     end
+  end
 
   def get_cpu_chart(info_num) do
     cpu_freq = get_cpu_freq(info_num)
