@@ -32,7 +32,7 @@ def get_supercluster_result(username: str, password: str, url_config: str) -> di
                 path=path, 
                 username=username,
                 password=password)
-            ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command()
+            ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
 
             str_result = ssh_stdout.read().decode('utf-8').replace("\'", "\"")
             json_result = json.loads(str_result)
