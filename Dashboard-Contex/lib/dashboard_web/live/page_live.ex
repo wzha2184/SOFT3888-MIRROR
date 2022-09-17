@@ -8,6 +8,50 @@ defmodule DashboardWeb.PageLive do
   import Contex
   import Dashboard.InfoHandler
 
+  # Check if data exists in the database
+  gpu_info = get_gpu_info(1)
+  [last_info] = cond do
+    length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
+    true -> [last_info] = get_gpu_info(1)
+  end
+  {:ok, last_gpu_temp} = Map.fetch(last_info, :Temperature)
+
+  # Get info from database
+  sc_charts = get_gpu_charts(5)
+
+  # Set initial state
+  @initial_state %{
+    local_mechine_info: %{
+      time: time(),
+      uptime: uptime(),
+      available_core: available_core(),
+      available_mem: get_memory(),
+    },
+
+    settings: %{
+      local_refresh_interval: 2000,
+      sc_interval: 20000,
+      bmc_interval_interval: 50000,
+      view: :home,
+    },
+
+    sc_info: %{
+      last_info: %{
+        last_gpu_temp: last_gpu_temp,
+      },
+      charts: %{
+        gpu_temp_svg: sc_charts[:gpu_temp_svg],
+        gpu_free_mem_svg: sc_charts[:gpu_free_mem_svg],
+        gpu_power_svg: sc_charts[:gpu_power_svg],
+      }
+    },
+
+    bmc_info: %{
+
+    }
+
+  }
+
   def render(assigns) do
     Phoenix.View.render(DashboardWeb.PageView, "index.html", assigns)
     # ~H"""
@@ -19,8 +63,8 @@ defmodule DashboardWeb.PageLive do
   def mount(_params, _session, socket) do
 
     tref = if connected?(socket) do
-      schedule_refresh(3000, %{tref: nil})
-      schedule_run_script(20000, %{tref: nil})
+      schedule_refresh(@initial_state[:settings][:local_refresh_interval], %{tref: nil})
+      schedule_run_script(@initial_state[:settings][:sc_interval], %{tref: nil})
       ## Use Javascript to make live chart
       # :timer.send_interval(10000, self(), :update_chart)
     end
@@ -31,38 +75,35 @@ defmodule DashboardWeb.PageLive do
   end
 
   def initial_state(socket) do
-    gpu_info = get_gpu_info(1)
-    [last_info] = cond do
-      length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
-      true -> [last_info] = get_gpu_info(1)
-    end
-    {:ok, last_cpu_temp} = Map.fetch(last_info, :Temperature)
+    # gpu_info = get_gpu_info(1)
+    # [last_info] = cond do
+    #   length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
+    #   true -> [last_info] = get_gpu_info(1)
+    # end
+    # {:ok, last_gpu_temp} = Map.fetch(last_info, :Temperature)
 
 
-    # [bmc_cpu_temp_chart, bmc_lan_temp_chart, bmc_chipset_fan_chart] = get_bmc_charts(5)
-    [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart] = get_gpu_charts(5)
+    # # [bmc_cpu_temp_chart, bmc_lan_temp_chart, bmc_chipset_fan_chart] = get_bmc_charts(5)
+    # [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart] = get_gpu_charts(5)
     socket
-    |> assign(time: time())
-    |> assign(score: 0)
-    |> assign(uptime: uptime())
-    |> assign(available_core: available_core())
-    |> assign(available_mem: get_memory())
-    |> assign(cpu_fan_random: Enum.random(700..2200))
-    |> assign(cpu_opt_random: Enum.random(1000..2500))
-    |> assign(cpu_current_freg_random: Enum.random(2200..3900))
-
+    |> assign(local_mechine_info: @initial_state[:local_mechine_info])
+    |> assign(settings: @initial_state[:settings])
     # ## BMC charts currently not available
     # |> assign(cpu_chart_svg: get_cpu_chart(10))
     # |> assign(bmc_cpu_temp_svg: bmc_cpu_temp_chart)
     # |> assign(bmc_lan_temp_svg: bmc_lan_temp_chart)
     # |> assign(bmc_chipset_fan_svg: bmc_chipset_fan_chart)
-    |> assign(last_gpu_temp: last_cpu_temp)
 
-    ## GPU charts
-    |> assign(gpu_temp_svg: gpu_temp_chart)
-    |> assign(gpu_free_mem_svg: gpu_free_mem_chart)
-    |> assign(gpu_power_svg: gpu_power_chart)
 
+
+    # |> assign(last_gpu_temp: last_gpu_temp)
+
+    # ## GPU charts
+    # |> assign(gpu_temp_svg: gpu_temp_chart)
+    # |> assign(gpu_free_mem_svg: gpu_free_mem_chart)
+    # |> assign(gpu_power_svg: gpu_power_chart)
+
+    |> assign(sc_info: @initial_state[:sc_info])
 
 
   end
@@ -125,7 +166,14 @@ defmodule DashboardWeb.PageLive do
       socket, time: time())}
   end
 
-
+  def update_local_info()do
+    %{
+      time: time(),
+      uptime: uptime(),
+      available_core: available_core(),
+      available_mem: get_memory()
+    }
+  end
 
   # Refresh method Update methods
   def handle_info(:refresh, socket) do
@@ -143,10 +191,32 @@ defmodule DashboardWeb.PageLive do
 
     # Repo.insert(changeset)
 
-    {:noreply, assign(socket, time: time(), uptime: uptime(),
-    available_core: available_core(), available_mem: get_memory(),
-    cpu_fan_random: Enum.random(700..2200), cpu_opt_random: Enum.random(1000..2500),
-    cpu_current_freg_random: Enum.random(2200..3900))}
+    {:noreply, assign(socket, local_mechine_info: update_local_info())}
+  end
+
+  def update_sc_info()do
+    # Check if data exists in the database
+    gpu_info = get_gpu_info(1)
+    [last_info] = cond do
+      length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
+      true -> [last_info] = get_gpu_info(1)
+    end
+    {:ok, last_gpu_temp} = Map.fetch(last_info, :Temperature)
+
+    # Get info from database
+    sc_charts = get_gpu_charts(5)
+
+    %{
+      last_info: %{
+        last_gpu_temp: last_gpu_temp,
+      },
+      charts: %{
+        gpu_temp_svg: sc_charts[:gpu_temp_svg],
+        gpu_free_mem_svg: sc_charts[:gpu_free_mem_svg],
+        gpu_power_svg: sc_charts[:gpu_power_svg],
+      }
+    }
+
   end
 
   # Run python script and store in database methods
@@ -159,19 +229,20 @@ defmodule DashboardWeb.PageLive do
     # [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart] = get_gpu_charts(5)
 
 
-    gpu_info = get_gpu_info(1)
-    [last_info] = cond do
-      length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
-      true -> [last_info] = get_gpu_info(1)
-    end
-    {:ok, last_cpu_temp} = Map.fetch(last_info, :Temperature)
+    # gpu_info = get_gpu_info(1)
+    # [last_info] = cond do
+    #   length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
+    #   true -> [last_info] = get_gpu_info(1)
+    # end
+    # {:ok, last_cpu_temp} = Map.fetch(last_info, :Temperature)
 
 
     # [bmc_cpu_temp_chart, bmc_lan_temp_chart, bmc_chipset_fan_chart] = get_bmc_charts(5)
-    [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart] = get_gpu_charts(5)
+    # [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart] = get_gpu_charts(5)
+
     to_database()
 
-    {:noreply, assign(socket, gpu_temp_svg: gpu_temp_chart, gpu_free_mem_svg: gpu_free_mem_chart, gpu_power_svg: gpu_power_chart, last_gpu_temp: last_cpu_temp)}
+    {:noreply, assign(socket, sc_info: update_sc_info())}
   end
 
   ## This is JavaScript chart handle refresh event

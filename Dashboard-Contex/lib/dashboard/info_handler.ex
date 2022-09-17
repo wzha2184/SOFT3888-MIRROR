@@ -135,7 +135,8 @@ defmodule Dashboard.InfoHandler do
   def get_gpu_charts(info_num) do
     gpu_info = get_gpu_info(info_num)
     cond do
-      length(gpu_info) == 0 -> ["gpu_temp_chart", "gpu_free_mem_chart", "gpu_power_chart"]
+      length(gpu_info) == 0 -> %{gpu_temp_svg: "gpu temp chart", gpu_free_mem_svg: "gpu free_mem_chart", gpu_power_svg: "gpu power chart"}
+
       true ->
       plot_options = %{
         top_margin: 5,
@@ -208,7 +209,7 @@ defmodule Dashboard.InfoHandler do
           # Generate SVG
           |> Contex.Plot.to_svg()
 
-        [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart]
+          %{gpu_temp_svg: gpu_temp_chart, gpu_free_mem_svg: gpu_free_mem_chart, gpu_power_svg: gpu_power_chart}
     end
   end
 
@@ -265,6 +266,7 @@ defmodule Dashboard.InfoHandler do
   end
 
   def to_database() do
+    IO.inspect("run sc script")
     # multi-thread
     pid = spawn(
       fn ->

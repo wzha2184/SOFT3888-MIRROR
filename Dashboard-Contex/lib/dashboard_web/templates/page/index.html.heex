@@ -109,7 +109,7 @@
           </div>
 
             <div class="box-content">
-              <span class="big"><%= @uptime/1000 %> s </span>
+              <span class="big"><%= @local_mechine_info[:uptime]/1000 %> s </span>
               Current Uptime
             </div>
           </div>
@@ -120,7 +120,7 @@
             </div>
 
             <div class="box-content">
-              <span class="big"><%=@available_core %></span>
+              <span class="big"><%=@local_mechine_info[:available_core] %></span>
               Available Cores
             </div>
           </div>
@@ -133,7 +133,7 @@
             </div>
 
             <div class="box-content">
-              <span class="big"><%=@available_mem%></span>
+              <span class="big"><%=@local_mechine_info[:available_mem]%></span>
               Available Memory
             </div>
           </div>
@@ -147,7 +147,7 @@
             </div>
 
             <div class="box-content">
-              <span class="big"><%= @last_gpu_temp %> °c</span>
+              <span class="big"><%= @sc_info[:last_info][:last_gpu_temp] %> °c</span>
               Current GPU Temperature
             </div>
           </div>
@@ -157,14 +157,14 @@
           <div class="person-box">
             <div class="chart">
             <%= #@bmc_cpu_temp_svg %>
-            <%= @gpu_temp_svg %>
+            <%= @sc_info[:charts][:gpu_temp_svg] %>
             </div>
           </div>
 
           <div class="person-box">
             <div class="chart">
             <%= #@cpu_chart_svg %>
-            <%= @gpu_free_mem_svg %>
+            <%= @sc_info[:charts][:gpu_free_mem_svg] %>
             </div>
 
           </div>
@@ -172,38 +172,38 @@
           <div class="person-box">
             <div class="chart">
             <%= #@bmc_lan_temp_svg %>
-            <%= @gpu_power_svg %>
+            <%= @sc_info[:charts][:gpu_power_svg] %>
             </div>
           </div>
 
           <div class="person-box">
             <div class="chart">
-            <%= @gpu_temp_svg %>
+            <%= @sc_info[:charts][:gpu_power_svg] %>
             </div>
           </div>
 
           <div class="person-box">
             <div class="chart">
-            <%= @gpu_temp_svg %>
+            <%= @sc_info[:charts][:gpu_power_svg] %>
             </div>
           </div>
 
           <div class="person-box">
             <div class="chart">
-            <%= @gpu_temp_svg %>
+            <%= @sc_info[:charts][:gpu_power_svg] %>
             </div>
 
           </div>
 
           <div class="person-box">
             <div class="chart">
-            <%= @gpu_temp_svg %>
+            <%= @sc_info[:charts][:gpu_power_svg] %>
             </div>
           </div>
 
           <div class="person-box">
             <div class="chart">
-            <%= @gpu_temp_svg %>
+            <%= @sc_info[:charts][:gpu_power_svg] %>
             </div>
           </div>
         </section>
