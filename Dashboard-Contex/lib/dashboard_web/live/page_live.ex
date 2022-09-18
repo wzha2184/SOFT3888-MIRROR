@@ -4,20 +4,10 @@ defmodule DashboardWeb.PageLive do
     """
   use DashboardWeb, :live_view
 
-  alias Dashboard.Repo
+  alias DashboardWeb.Layout
   import Contex
   import Dashboard.InfoHandler
 
-  # Check if data exists in the database
-  gpu_info = get_gpu_info(1)
-  [last_info] = cond do
-    length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
-    true -> [last_info] = get_gpu_info(1)
-  end
-  {:ok, last_gpu_temp} = Map.fetch(last_info, :Temperature)
-
-  # Get info from database
-  sc_charts = get_gpu_charts(5)
 
   # Set initial state
   @initial_state %{
@@ -35,25 +25,21 @@ defmodule DashboardWeb.PageLive do
       view: :home,
     },
 
-    sc_info: %{
-      last_info: %{
-        last_gpu_temp: last_gpu_temp,
-      },
-      charts: %{
-        gpu_temp_svg: sc_charts[:gpu_temp_svg],
-        gpu_free_mem_svg: sc_charts[:gpu_free_mem_svg],
-        gpu_power_svg: sc_charts[:gpu_power_svg],
-      }
-    },
-
-    bmc_info: %{
-
-    }
-
   }
 
+  @views [:home, :sc9_gpu, :cpu, :bmc]
+
+  def render(view, assigns) when view in @views do
+    Phoenix.View.render(DashboardWeb.PageView, "#{view}.html", assigns)
+  end
+
+
+
   def render(assigns) do
-    Phoenix.View.render(DashboardWeb.PageView, "index.html", assigns)
+    ~H"""
+    <%= Layout.render(assigns) %>
+    """
+    # Phoenix.View.render(DashboardWeb.PageView, "index.html", assigns)
     # ~H"""
 
     # """
@@ -75,6 +61,37 @@ defmodule DashboardWeb.PageLive do
   end
 
   def initial_state(socket) do
+    # Check if data exists in the database
+    gpu_info = get_gpu_info(1)
+    [last_info] = cond do
+      length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
+      true -> [last_info] = get_gpu_info(1)
+    end
+    {:ok, last_gpu_temp} = Map.fetch(last_info, :Temperature)
+
+    # Get info from database
+    sc_charts = get_gpu_charts(5)
+    %{last_gpu_temp: last_gpu_temp, sc_charts: sc_charts}
+
+    # All needed infos
+    all_infos =  %{
+      sc_info: %{
+        last_info: %{
+          last_gpu_temp: last_gpu_temp,
+        },
+        charts: %{
+          gpu_temp_svg: sc_charts[:gpu_temp_svg],
+          gpu_free_mem_svg: sc_charts[:gpu_free_mem_svg],
+          gpu_power_svg: sc_charts[:gpu_power_svg],
+        }
+      },
+
+      bmc_info: %{
+
+      }
+
+    }
+
     # gpu_info = get_gpu_info(1)
     # [last_info] = cond do
     #   length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
@@ -103,7 +120,7 @@ defmodule DashboardWeb.PageLive do
     # |> assign(gpu_free_mem_svg: gpu_free_mem_chart)
     # |> assign(gpu_power_svg: gpu_power_chart)
 
-    |> assign(sc_info: @initial_state[:sc_info])
+    |> assign(sc_info: all_infos[:sc_info])
 
 
   end
@@ -123,6 +140,12 @@ defmodule DashboardWeb.PageLive do
       {:ok, tref} -> tref
       _ -> nil
     end
+  end
+
+  def handle_event("render_" <> view, _path, socket) do
+    send self(), :refresh
+
+    {:noreply, update(socket, :settings, &(put_in(&1[:view], String.to_existing_atom(view))))}
   end
 
 
@@ -191,7 +214,10 @@ defmodule DashboardWeb.PageLive do
 
     # Repo.insert(changeset)
 
-    {:noreply, assign(socket, local_mechine_info: update_local_info())}
+    # {:noreply, assign(socket, local_mechine_info: update_local_info())}
+
+    {:noreply, assign(socket, local_mechine_info: update_local_info(), sc_info: update_sc_info())}
+
   end
 
   def update_sc_info()do
@@ -221,13 +247,6 @@ defmodule DashboardWeb.PageLive do
 
   # Run python script and store in database methods
   def handle_info(:run_script, socket) do
-    # gpu_info = get_gpu_info(2)
-    # [head | tail] = gpu_info
-    # # IO.inspect Map.fetch(head, :cpu_temp)
-    # last_gpu_temp = "N/A"
-    # {:ok, last_cpu_temp} = Map.fetch(head, :Temperature)
-    # [gpu_temp_chart, gpu_free_mem_chart, gpu_power_chart] = get_gpu_charts(5)
-
 
     # gpu_info = get_gpu_info(1)
     # [last_info] = cond do
@@ -242,7 +261,8 @@ defmodule DashboardWeb.PageLive do
 
     to_database()
 
-    {:noreply, assign(socket, sc_info: update_sc_info())}
+    # {:noreply, assign(socket, sc_info: update_sc_info())}
+    {:noreply, socket}
   end
 
   ## This is JavaScript chart handle refresh event

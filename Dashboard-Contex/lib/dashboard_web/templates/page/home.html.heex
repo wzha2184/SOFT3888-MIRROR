@@ -1,0 +1,122 @@
+
+      <header class="content-head">
+        <h1>Basic Inforamtion</h1>
+
+        <div class="action">
+          <button phx-click="add-button">
+            Click Me!
+          </button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="info-boxes">
+          <div class="info-box active">
+            <div class="box-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+            <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+            </svg>
+          </div>
+
+            <div class="box-content">
+              <span class="big"><%= @local_mechine_info[:uptime]/1000 %> s </span>
+              Current Uptime
+            </div>
+          </div>
+
+          <div class="info-box active">
+            <div class="box-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M20 10H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V11a1 1 0 0 0-1-1zm-1 10H5v-8h14v8zM5 6h14v2H5zM7 2h10v2H7z"/></svg>
+            </div>
+
+            <div class="box-content">
+              <span class="big"><%=@local_mechine_info[:available_core] %></span>
+              Available Cores
+            </div>
+          </div>
+
+          <div class="info-box active">
+            <div class="box-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-memory" viewBox="0 0 16 16">
+            <path d="M1 3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h4.586a1 1 0 0 0 .707-.293l.353-.353a.5.5 0 0 1 .708 0l.353.353a1 1 0 0 0 .707.293H15a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H1Zm.5 1h3a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5Zm5 0h3a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5Zm4.5.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-4ZM2 10v2H1v-2h1Zm2 0v2H3v-2h1Zm2 0v2H5v-2h1Zm3 0v2H8v-2h1Zm2 0v2h-1v-2h1Zm2 0v2h-1v-2h1Zm2 0v2h-1v-2h1Z"/>
+            </svg>
+            </div>
+
+            <div class="box-content">
+              <span class="big"><%=@local_mechine_info[:available_mem]%></span>
+              Available Memory
+            </div>
+          </div>
+
+          <div class="info-box active">
+            <div class="box-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-thermometer-half" viewBox="0 0 16 16">
+              <path d="M9.5 12.5a1.5 1.5 0 1 1-2-1.415V6.5a.5.5 0 0 1 1 0v4.585a1.5 1.5 0 0 1 1 1.415z"/>
+              <path d="M5.5 2.5a2.5 2.5 0 0 1 5 0v7.55a3.5 3.5 0 1 1-5 0V2.5zM8 1a1.5 1.5 0 0 0-1.5 1.5v7.987l-.167.15a2.5 2.5 0 1 0 3.333 0l-.166-.15V2.5A1.5 1.5 0 0 0 8 1z"/>
+            </svg>
+            </div>
+
+            <div class="box-content">
+              <span class="big"><%= @sc_info[:last_info][:last_gpu_temp] %> °c</span>
+              Current GPU Temperature
+            </div>
+          </div>
+        </section>
+
+        <section class="person-boxes">
+          <div class="person-box">
+            <div class="chart">
+            <%= #@bmc_cpu_temp_svg %>
+            <%= @sc_info[:charts][:gpu_temp_svg] %>
+            </div>
+          </div>
+
+          <div class="person-box">
+            <div class="chart">
+            <%= #@cpu_chart_svg %>
+            <%= @sc_info[:charts][:gpu_free_mem_svg] %>
+            </div>
+
+          </div>
+
+          <div class="person-box">
+            <div class="chart">
+            <%= #@bmc_lan_temp_svg %>
+            <%= @sc_info[:charts][:gpu_power_svg] %>
+            </div>
+          </div>
+
+          <div class="person-box">
+            <div class="chart">
+            <%= @sc_info[:charts][:gpu_power_svg] %>
+            </div>
+          </div>
+
+          <div class="person-box">
+            <div class="chart">
+            <%= @sc_info[:charts][:gpu_power_svg] %>
+            </div>
+          </div>
+
+          <div class="person-box">
+            <div class="chart">
+            <%= @sc_info[:charts][:gpu_power_svg] %>
+            </div>
+
+          </div>
+
+          <div class="person-box">
+            <div class="chart">
+            <%= @sc_info[:charts][:gpu_power_svg] %>
+            </div>
+          </div>
+
+          <div class="person-box">
+            <div class="chart">
+            <%= @sc_info[:charts][:gpu_power_svg] %>
+            </div>
+          </div>
+        </section>
+      </div>
+
