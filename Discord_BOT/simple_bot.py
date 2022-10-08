@@ -4,12 +4,17 @@ from discord.ext import tasks
 
 
 client = discord.Client(intents=discord.Intents.default())
-
-@tasks.loop(minutes=1)
+sh = 0
+@tasks.loop(seconds=1)
 async def test():
-    if 1:
+    global sh
+    if sh < 30:
       channel = client.get_channel(1028168592124026882)
-      await channel.send("report")
+      await channel.send(sh)
+    else:
+      channel = client.get_channel(1028168592124026882)
+      await channel.send(sh)
+    sh += 1
 
 @client.event
 async def on_ready():
