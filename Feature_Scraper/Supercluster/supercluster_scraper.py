@@ -14,4 +14,8 @@ def get_supercluster_result() -> dict:
 
 
 if __name__ == "__main__":
-    print(get_supercluster_result())
+    result = get_supercluster_result()
+    targets = ['GPU', 'CPU', 'BIOS']
+    for t in targets:
+        assert t in str(result)
+    print(result)

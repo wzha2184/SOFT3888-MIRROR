@@ -109,5 +109,7 @@ class WebScraper:
 
 if __name__ == "__main__":
     web_scraper = WebScraper("BMC1", "https://192.168.10.108")
-    print(json.dumps(web_scraper.get_bmc_result(), indent=2))
+    result = json.dumps(web_scraper.get_bmc_result(), indent=2)
+    assert "BMC" in str(result), "BMC not in result"
+    print(result)
 
