@@ -34,8 +34,6 @@ defmodule DashboardWeb.Layout do
           HOME PAGE
           </a>
 
-
-
           <section class="dicover">
             <h3>SC 9</h3>
 
@@ -271,6 +269,11 @@ defmodule DashboardWeb.Layout do
           text-transform: uppercase;
           color: #fff;
           font-weight: 900;
+          transition: color 0.4s ease;
+        }
+
+        .menu-wrap nav a:hover {
+          color: #00FFC3;
         }
 
         .menu-wrap nav h3 {

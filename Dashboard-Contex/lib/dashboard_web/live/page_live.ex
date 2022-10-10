@@ -12,7 +12,7 @@ defmodule DashboardWeb.PageLive do
   # Set initial state
   @initial_state %{
     local_mechine_info: %{
-      time: time(),
+      time: getTime(),
       uptime: uptime(),
       available_core: available_core(),
       available_mem: get_memory(),
@@ -27,7 +27,7 @@ defmodule DashboardWeb.PageLive do
 
   }
 
-  @views [:home, :sc9_gpu, :cpu, :bmc]
+  @views [:home, :sc9_gpu, :sc9_cpu, :bmc]
 
   def render(view, assigns) when view in @views do
     Phoenix.View.render(DashboardWeb.PageView, "#{view}.html", assigns)
@@ -60,31 +60,41 @@ defmodule DashboardWeb.PageLive do
     }
   end
 
-  def initial_state(socket) do
-    # Check if data exists in the database
-    gpu_info = get_gpu_info(1)
-    [last_info] = cond do
-      length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
-      true -> [last_info] = get_gpu_info(1)
-    end
-    {:ok, last_gpu_temp} = Map.fetch(last_info, :Temperature)
+  def get_all_sc_info() do
+    # # Check if data exists in the database
+    # gpu_info = get_gpu_info(1)
+    # [last_info] = cond do
+    #   length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
+    #   true -> [last_info] = get_gpu_info(1)
+    # end
+    # {:ok, last_gpu_temp} = Map.fetch(last_info, :Temperature)
 
     # Get info from database
-    sc_charts = get_gpu_charts(5)
-    %{last_gpu_temp: last_gpu_temp, sc_charts: sc_charts}
+    sc_gpu_charts = get_gpu_charts(5)
+    sc_cpu_freq_chart = get_cpu_freq_chart(5)
+    sc_status = get_sc_status(1)
+
+    # %{last_gpu_temp: last_gpu_temp, sc_gpu_charts: sc_gpu_charts, sc_cpu_freq_chart: sc_cpu_freq_chart}
+    %{
+      last_info: %{
+        last_gpu_temp: sc_gpu_charts[:last_gpu_temp],
+        last_cpu_freq: sc_cpu_freq_chart[:last_cpu_freq],
+        sc_9_status: sc_status[:sc_9_status]
+      },
+      charts: %{
+        gpu_temp_svg: sc_gpu_charts[:gpu_temp_svg],
+        gpu_free_mem_svg: sc_gpu_charts[:gpu_free_mem_svg],
+        gpu_power_svg: sc_gpu_charts[:gpu_power_svg],
+        cpu_freq_svg: sc_cpu_freq_chart[:cpu_freq_chart],
+      }
+    }
+  end
+
+  def initial_state(socket) do
 
     # All needed infos
     all_infos =  %{
-      sc_info: %{
-        last_info: %{
-          last_gpu_temp: last_gpu_temp,
-        },
-        charts: %{
-          gpu_temp_svg: sc_charts[:gpu_temp_svg],
-          gpu_free_mem_svg: sc_charts[:gpu_free_mem_svg],
-          gpu_power_svg: sc_charts[:gpu_power_svg],
-        }
-      },
+      sc_info: get_all_sc_info(),
 
       bmc_info: %{
 
@@ -171,27 +181,18 @@ defmodule DashboardWeb.PageLive do
     # # Repo.insert(changeset)
 
 
-    time = time()
+    time = getTime()
     {
     :noreply,
     assign(
     socket,
-    time: time)}
+    time: getTime())}
   end
 
-  def handle_event("get-button", _, socket) do
-    # IO.inspect Repo.all(from i in Cpu, select: i.cpu_current_freq)
-    # IO.inspect Repo.get(Cpu, 54)
-
-    {
-      :noreply,
-      assign(
-      socket, time: time())}
-  end
 
   def update_local_info()do
     %{
-      time: time(),
+      time: getTime(),
       uptime: uptime(),
       available_core: available_core(),
       available_mem: get_memory()
@@ -216,34 +217,34 @@ defmodule DashboardWeb.PageLive do
 
     # {:noreply, assign(socket, local_mechine_info: update_local_info())}
 
-    {:noreply, assign(socket, local_mechine_info: update_local_info(), sc_info: update_sc_info())}
+    {:noreply, assign(socket, local_mechine_info: update_local_info(), sc_info: get_all_sc_info())}
 
   end
 
-  def update_sc_info()do
-    # Check if data exists in the database
-    gpu_info = get_gpu_info(1)
-    [last_info] = cond do
-      length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
-      true -> [last_info] = get_gpu_info(1)
-    end
-    {:ok, last_gpu_temp} = Map.fetch(last_info, :Temperature)
+  # def update_sc_info()do
+  #   # Check if data exists in the database
+  #   gpu_info = get_gpu_info(1)
+  #   [last_info] = cond do
+  #     length(gpu_info) == 0 -> [%{Temperature: "N/A"}]
+  #     true -> [last_info] = get_gpu_info(1)
+  #   end
+  #   {:ok, last_gpu_temp} = Map.fetch(last_info, :Temperature)
 
-    # Get info from database
-    sc_charts = get_gpu_charts(5)
+  #   # Get info from database
+  #   sc_charts = get_gpu_charts(5)
 
-    %{
-      last_info: %{
-        last_gpu_temp: last_gpu_temp,
-      },
-      charts: %{
-        gpu_temp_svg: sc_charts[:gpu_temp_svg],
-        gpu_free_mem_svg: sc_charts[:gpu_free_mem_svg],
-        gpu_power_svg: sc_charts[:gpu_power_svg],
-      }
-    }
+  #   %{
+  #     last_info: %{
+  #       last_gpu_temp: last_gpu_temp,
+  #     },
+  #     charts: %{
+  #       gpu_temp_svg: sc_charts[:gpu_temp_svg],
+  #       gpu_free_mem_svg: sc_charts[:gpu_free_mem_svg],
+  #       gpu_power_svg: sc_charts[:gpu_power_svg],
+  #     }
+  #   }
 
-  end
+  # end
 
   # Run python script and store in database methods
   def handle_info(:run_script, socket) do

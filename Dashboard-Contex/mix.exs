@@ -51,7 +51,8 @@ defmodule Dashboard.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:erlport, "~> 0.10.1"},
       {:json, "~> 1.4"},
-      {:contex, "~> 0.4.0"}
+      {:contex, "~> 0.4.0"},
+      {:timex, "~> 3.7"},
     ]
   end
 

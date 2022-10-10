@@ -1,11 +1,11 @@
 
       <header class="content-head">
-        <h1>GPU INFORMATION</h1>
+        <h1>SC 9 GPU INFORMATION</h1>
 
         <div class="action">
-          <button phx-click="add-button">
+          <%# <button phx-click="add-button">
             Click Me!
-          </button>
+          </button> %>
         </div>
       </header>
 
@@ -44,7 +44,7 @@
             </div>
 
             <div class="box-content">
-              <span class="big"><%=@local_mechine_info[:available_mem]%></span>
+              <span class="big"><%=Decimal.round(Decimal.from_float(@local_mechine_info[:available_mem]/1000000), 2) %> MB</span>
               Available Memory
             </div>
           </div>
