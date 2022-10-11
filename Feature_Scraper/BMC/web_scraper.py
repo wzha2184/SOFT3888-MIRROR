@@ -61,8 +61,6 @@ class WebScraper:
             self.web_accesser.login()
             html_doc = self.web_accesser.get_page("sensors")
 
-            self.result["status"] = "OK"
-
             soup = BeautifulSoup(html_doc, 'html.parser')
             critical_sensors = None
             descrete_sensors = None
@@ -111,6 +109,10 @@ class WebScraper:
                     if len(state) == 2:
                         self.result[state[0]] = state[1].split(" ")[0].replace("RPM", "")
                         state = []
+
+            # Power panel
+
+            self.result["status"] = "OK"
         except:
             self.result["status"] = "error"
 

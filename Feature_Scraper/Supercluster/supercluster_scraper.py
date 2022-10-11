@@ -1,11 +1,11 @@
 import paramiko
 import json
 
-from gpu_scraper import GPUScraper
-from shell_scraper import ShellScraper
-
 
 def get_supercluster_result() -> dict:
+    from gpu_scraper import GPUScraper
+    from shell_scraper import ShellScraper
+
     gpu_scraper = GPUScraper()
     shell_scraper = ShellScraper()
 
