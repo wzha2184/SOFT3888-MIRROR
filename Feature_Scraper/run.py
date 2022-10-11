@@ -1,17 +1,22 @@
 import paramiko
 import sys
 import json
-from BMC.web_scraper import WebScraper
+from BMC.web_scraper import WebScraper, WebAccesser
 
 def get_bmc_result(url_config: str) -> dict:
     with open(url_config, "r") as jc:
         config = json.load(jc)
-        bmc_url = config["BMC"]
+        superclusters = config["superclusters"]
 
+        web_accesser = WebAccesser()
         result = {}
-        for bmc in bmc_url.keys():
-            web_scraper = WebScraper(bmc, bmc_url[bmc])
-            result.update(web_scraper.get_bmc_result())
+        result["BMC"] = {}
+        for sc in superclusters.keys():
+            bmc_url = superclusters[sc]["BMC"]
+            web_accesser.set_url(bmc_url)
+            web_scraper = WebScraper(sc, web_accesser)
+    
+            result["BMC"][sc] = web_scraper.get_bmc_result()
 
         return result
 
@@ -21,17 +26,14 @@ def get_supercluster_result(username: str, password: str, url_config: str) -> di
         config = json.load(jc)
 
         result = {}
-        sc_url = config["supercluster"]
-        for sc in sc_url.keys():
+        superclusters = config["supercluster"]
+        for sc in superclusters.keys():
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(sc_url[sc], username=username, password=password)
+            ssh.connect(superclusters[sc]["IP"], username=username, password=password)
 
             path = "soft3888_tu12_04_re_p39/Feature_Scraper/Supercluster"
-            command = "cd {path}; echo 6r7mYcxLHXLq8Rgu | sudo -S -k python3 supercluster_scraper.py {username} {password}".format(
-                path=path, 
-                username=username,
-                password=password)
+            command = "cd {path}; echo 6r7mYcxLHXLq8Rgu | sudo -S -k python3 supercluster_scraper.py".format(path=path)
             ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
 
             str_result = ssh_stdout.read().decode('utf-8').replace("\'", "\"")
