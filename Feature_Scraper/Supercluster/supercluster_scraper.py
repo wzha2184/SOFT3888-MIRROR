@@ -1,7 +1,6 @@
-from gpu_scraper import GPUScraper
-from shell_scraper import ShellScraper
 import paramiko
 import json
+
 
 def get_supercluster_result() -> dict:
     gpu_scraper = GPUScraper()
@@ -10,16 +9,14 @@ def get_supercluster_result() -> dict:
     gpu_result = gpu_scraper.get_gpu_result()
     shell_result = shell_scraper.get_shell_result()
 
-    result = {}
-    result["GPU"] = gpu_result
-    result["CPU"] = {}
-    result["BIOS"] = {}
+    result = {"GPU": gpu_result, "CPU": {}, "BIOS": {}}
 
     result.update(shell_result)
 
     return result
 
-def run(username: str, password: str, url_config: str) -> dict:
+
+def run_supercluster_scraper(username: str, password: str, url_config: str) -> dict:
     with open(url_config, "r") as jc:
         config = json.load(jc)
 

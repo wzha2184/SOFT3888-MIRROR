@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 import json
 import os
 
+
 class WebAccesser:
     def __init__(self) -> None:
         self.url = ""
@@ -19,22 +20,22 @@ class WebAccesser:
         self._options.add_argument('--disable-dev-shm-usage')
 
         self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self._options)
-        
+
     def set_url(self, url: str) -> None:
         self.url = url
-    
+
     def login(self) -> None:
         self.driver.get(self.url + '/#login')
-        
+
         name = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.ID, "userid")))
         name.send_keys("admin")
 
         password = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.ID, "password")))
         password.send_keys("admin")
-        
+
         submit = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.ID, "btn-login")))
         submit.click()
-        
+
         time.sleep(15)
 
     def get_page(self, page_name: str) -> str:
@@ -53,12 +54,12 @@ class WebScraper:
         self.get_info()
 
     def get_bmc_result(self) -> dict:
-        return self.result 
+        return self.result
 
     def get_info(self) -> None:
         try:
             self.web_accesser.login()
-            html_doc = self.web_accesser.get_page()
+            html_doc = self.web_accesser.get_page("sensors")
 
             self.result["status"] = "OK"
 
@@ -113,7 +114,8 @@ class WebScraper:
         except:
             self.result["status"] = "error"
 
-def run(url_config: str) -> dict:
+
+def run_web_scraper(url_config: str) -> dict:
     with open(url_config, "r") as jc:
         config = json.load(jc)
         superclusters = config["superclusters"]
@@ -125,19 +127,13 @@ def run(url_config: str) -> dict:
             bmc_url = superclusters[sc]["BMC"]
             web_accesser.set_url(bmc_url)
             web_scraper = WebScraper(sc, web_accesser)
-    
+
             result["BMC"][sc] = web_scraper.get_bmc_result()
 
         return result
 
+
 if __name__ == "__main__":
-    # config = os.path.join("..", "config.json")
-    # result = run(config)
-    # print(json.dumps(result, indent=2))
-    web_accesser = WebAccesser()
-    bmc_url = "https://192.168.10.102"
-    web_accesser.set_url(bmc_url)
-
-    web_accesser.login()
-    web_accesser.get_page()
-
+    config = os.path.join("..", "config.json")
+    result = run(config)
+    print(json.dumps(result, indent=2))

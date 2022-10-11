@@ -2,11 +2,10 @@ import re
 import psutil
 import subprocess
 
+
 class ShellScraper:
     def __init__(self) -> None:
-        self.result = {}
-        self.result["CPU"] = {}
-        self.result["BIOS"] = {}
+        self.result = {"CPU": {}, "BIOS": {}}
 
     def get_shell_result(self) -> dict:
         self.get_all_shell_result()
