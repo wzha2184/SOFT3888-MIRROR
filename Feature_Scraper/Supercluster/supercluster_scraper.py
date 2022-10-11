@@ -4,6 +4,7 @@ import json
 from gpu_scraper import GPUScraper
 from shell_scraper import ShellScraper
 
+
 def get_supercluster_result() -> dict:
     gpu_scraper = GPUScraper()
     shell_scraper = ShellScraper()
@@ -12,7 +13,6 @@ def get_supercluster_result() -> dict:
     shell_result = shell_scraper.get_shell_result()
 
     result = {"GPU": gpu_result, "CPU": {}, "BIOS": {}}
-
     result.update(shell_result)
 
     return result
@@ -22,7 +22,7 @@ def run_supercluster_scraper(username: str, password: str, url_config: str) -> d
     with open(url_config, "r") as jc:
         config = json.load(jc)
 
-        result = {}
+        result = {"GPU": {}, "CPU": {}, "BIOS": {}}
         superclusters = config["superclusters"]
         for sc in superclusters.keys():
             ssh = paramiko.SSHClient()
@@ -35,7 +35,10 @@ def run_supercluster_scraper(username: str, password: str, url_config: str) -> d
 
             str_result = ssh_stdout.read().decode('utf-8').replace("\'", "\"")
             json_result = json.loads(str_result)
-            result.update(json_result)
+
+            result["GPU"][sc] = json_result["GPU"]
+            result["CPU"][sc] = json_result["CPU"]
+            result["BIOS"][sc] = json_result["BIOS"]
 
         return result
 

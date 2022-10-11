@@ -1,4 +1,3 @@
-import paramiko
 import sys
 import json
 from BMC.web_scraper import run_web_scraper
@@ -6,9 +5,9 @@ from Supercluster.supercluster_scraper import run_supercluster_scraper
 
 
 def get_result(username: str, password: str, url_config: str):
-    # result = run_web_scraper(url_config)
-    # result.update(run_supercluster_scraper(username, password, url_config))
-    result = run_supercluster_scraper(username, password, url_config)
+    result = run_web_scraper(url_config)
+    result.update(run_supercluster_scraper(username, password, url_config))
+
     return result
 
 

@@ -13,24 +13,32 @@ class ShellScraper:
 
     def get_all_shell_result(self) -> None:
         self.get_CPU_frequency()
-        self.get_CPU_serial_number()
-        self.get_connected_devices()
-        self.get_PCIe()
+        try:
+            self.get_CPU_serial_number()
+            self.get_connected_devices()
+            self.get_PCIe()
+            self.result["BIOS"]["status"] = "OK"
+        except:
+            self.result["BIOS"]["status"] = "error"
 
     def get_CPU_frequency(self) -> None:
-        # Return CPU frequency as a named tuple including current, min and max frequencies expressed in Mhz.
-        """
-        scpufreq(current=2024.5329375, min=1400.0, max=2900.0)
-        """
-        cpu_freq = str(psutil.cpu_freq()).split(', ')
-        cpu_current_freq = float(cpu_freq[0][17:])
-        cpu_min_freq = float(cpu_freq[1][4:])
-        cpu_max_freq = float(cpu_freq[2][4:-2])
+        try:
+            # Return CPU frequency as a named tuple including current, min and max frequencies expressed in Mhz.
+            """
+            scpufreq(current=2024.5329375, min=1400.0, max=2900.0)
+            """
+            cpu_freq = str(psutil.cpu_freq()).split(', ')
+            cpu_current_freq = float(cpu_freq[0][17:])
+            cpu_min_freq = float(cpu_freq[1][4:])
+            cpu_max_freq = float(cpu_freq[2][4:-2])
 
-        self.result["CPU"]["cpu_freq"] = {}
-        self.result["CPU"]["cpu_freq"]["cpu_current_freq"] = cpu_current_freq
-        self.result["CPU"]["cpu_freq"]["cpu_min_freq"] = cpu_min_freq
-        self.result["CPU"]["cpu_freq"]["cpu_max_freq"] = cpu_max_freq
+            self.result["CPU"]["cpu_freq"] = {}
+            self.result["CPU"]["cpu_freq"]["cpu_current_freq"] = cpu_current_freq
+            self.result["CPU"]["cpu_freq"]["cpu_min_freq"] = cpu_min_freq
+            self.result["CPU"]["cpu_freq"]["cpu_max_freq"] = cpu_max_freq
+            self.result["CPU"]["status"] = "OK"
+        except:
+            self.result["CPU"]["status"] = "error"
 
     def get_CPU_serial_number(self) -> None:
         # Baseboard (Motherboard) serial number
@@ -111,7 +119,6 @@ class ShellScraper:
             self.result["BIOS"]['PCIe information'][slot]['Characteristics'] = chars1.strip()
             bus_address = s[bus_addresses[-1]:].strip().split(": ")
             self.result["BIOS"]['PCIe information'][slot][bus_address[0]] = bus_address[1]
-
     
 if __name__ == "__main__":
     shell_scraper = ShellScraper()
