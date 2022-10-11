@@ -26,7 +26,7 @@ def get_supercluster_result(username: str, password: str, url_config: str) -> di
         config = json.load(jc)
 
         result = {}
-        superclusters = config["supercluster"]
+        superclusters = config["superclusters"]
         for sc in superclusters.keys():
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
