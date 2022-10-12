@@ -70,7 +70,9 @@ defmodule DashboardWeb.PageLive do
     # {:ok, last_gpu_temp} = Map.fetch(last_info, :Temperature)
 
     # Get info from database
-    sc_gpu_charts = get_gpu_charts(5)
+    sc_gpu_charts = get_gpu_charts("GPU-f11c8a14-3c9b-48e8-8c02-7da2495d17ee", 5)
+    # sc_gpu_charts_2 = get_gpu_charts("GPU-5caf1987-9e67-8051-0080-9384b24a66db", 5)
+
     sc_cpu_freq_chart = get_cpu_freq_chart(5)
     sc_status = get_sc_status(1)
 

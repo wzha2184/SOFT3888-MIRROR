@@ -153,22 +153,22 @@ defmodule Dashboard.InfoHandler do
     [bmc_cpu_temp_chart, bmc_lan_temp_chart, bmc_chipset_fan_chart]
   end
 
-  def get_gpu_info(limit \\ 10) do
+  def get_gpu_info(uuid, limit \\ 10) do
     q = from t in Gpu,
+        where: t.'UUID' == ^uuid,
         order_by: [desc: t.id],
         limit: ^limit,
-        select: %{inserted_at: t.inserted_at, Temperature: t.'Temperature', totalMemory: t.totalMemory, freeMemory: t.freeMemory, power: t.power}
-
+        select: %{inserted_at: t.inserted_at, Temperature: t.'Temperature', totalMemory: t.totalMemory, freeMemory: t.freeMemory, power: t.power, uuid: t.'UUID'}
     Repo.all(q)
   end
 
-  def get_gpu_charts(info_num) do
-    gpu_info = get_gpu_info(info_num)
+  def get_gpu_charts(uuid, info_num) do
+    gpu_info = get_gpu_info(uuid, info_num)
     cond do
       length(gpu_info) == 0 -> %{last_gpu_temp: "N/A", gpu_temp_svg: "gpu temp chart", gpu_free_mem_svg: "gpu free_mem_chart", gpu_power_svg: "gpu power chart"}
 
       true ->
-      [last_info] = get_gpu_info(1)
+      [last_info] = get_gpu_info(uuid, 1)
       {:ok, last_gpu_temp} = Map.fetch(last_info, :Temperature)
       plot_options = %{
         top_margin: 5,
@@ -303,9 +303,9 @@ defmodule Dashboard.InfoHandler do
       fn ->
 
         {_, list} = JSON.decode(Dashboard.get_super_clusters_data())
-        # sc_status table
-        changeset = Sc_status.changeset(%Sc_status{}, list["sc_status"])
-        Repo.insert(changeset)
+        # # sc_status table
+        # changeset = Sc_status.changeset(%Sc_status{}, list["sc_status"])
+        # Repo.insert(changeset)
 
         # BMC table
         changeset = Bmc.changeset(%Bmc{}, list["BMC"]["BMC1"])
@@ -315,10 +315,13 @@ defmodule Dashboard.InfoHandler do
         changeset = CpuFreq.changeset(%CpuFreq{}, list["CPU"]["cpu_freq"])
         Repo.insert(changeset)
 
-        # GPU table
+        # GPU table 1
         changeset = Gpu.changeset(%Gpu{}, list["GPU"]["GPU-f11c8a14-3c9b-48e8-8c02-7da2495d17ee"])
         Repo.insert(changeset)
 
+        # GPU table 2
+        changeset = Gpu.changeset(%Gpu{}, list["GPU"]["GPU-5caf1987-9e67-8051-0080-9384b24a66db"])
+        Repo.insert(changeset)
 
 
         # IO.inspect changeset
