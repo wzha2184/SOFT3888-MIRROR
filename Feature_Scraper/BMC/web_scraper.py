@@ -137,5 +137,5 @@ def run_web_scraper(url_config: str) -> dict:
 
 if __name__ == "__main__":
     config = os.path.join("..", "config.json")
-    result = run(config)
+    result = run_web_scraper(config)
     print(json.dumps(result, indent=2))
