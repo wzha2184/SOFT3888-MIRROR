@@ -51,12 +51,13 @@ class WebScraper:
 
         self.result = {}
 
-        self.get_info()
+        self.get_sensors_info()
+        self.get_power_control_info()
 
     def get_bmc_result(self) -> dict:
         return self.result
 
-    def get_info(self) -> None:
+    def get_sensors_info(self) -> None:
         try:
             self.web_accesser.login()
             html_doc = self.web_accesser.get_page("sensors")
@@ -114,7 +115,34 @@ class WebScraper:
 
             self.result["status"] = "OK"
         except:
-            self.result["status"] = "error"
+            self.result["status"] = "error - Not able to login BMC of {}".format(self.machin_name)
+
+    def get_power_control_info(self) -> None:
+        power_selection = {
+            "idpower_off_command":"Power Off", 
+            "idpower_on_command": "Power On", 
+            "idpower_cycle_command": "Power Cycle", 
+            "idpower_reset_command": "Hard Reset",
+            "idpower_acpi_command": "ACPI Shutdown"
+            }
+
+        try:
+            self.web_accesser.login()
+            html_doc = self.web_accesser.get_page("power-control")
+
+            soup = BeautifulSoup(html_doc, 'html.parser')
+
+            info = soup.find_all("div")
+            for div in info:
+                if div.get("class") is not None and len(div.get("class")) >= 2:
+                    if div.get("class")[0] == "iradio_square-blue" and div.get("class")[1] == "checked":
+                        power = power_selection[div.input.get("id")]
+                        self.result["power_control"] = power
+                    
+            self.result["status"] = "OK"
+
+        except:
+            self.result["status"] = "error - Not able to login BMC of {}".format(self.machin_name)
 
 
 def run_web_scraper(url_config: str) -> dict:
