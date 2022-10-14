@@ -30,7 +30,7 @@ defmodule DashboardWeb.Layout do
         </figure>
 
         <nav>
-          <a href="#" phx-click="render_home">
+          <a href="#" phx-click="render_home_9">
           HOME PAGE
           </a>
 
@@ -39,7 +39,7 @@ defmodule DashboardWeb.Layout do
 
             <ul>
               <li>
-                <a href="#" phx-click="render_sc9_cpu">
+                <a href="#" phx-click="render_cpu_9">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cpu" viewBox="0 0 16 16">
                 <path d="M5 0a.5.5 0 0 1 .5.5V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2A2.5 2.5 0 0 1 14 4.5h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14a2.5 2.5 0 0 1-2.5 2.5v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14A2.5 2.5 0 0 1 2 11.5H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2A2.5 2.5 0 0 1 4.5 2V.5A.5.5 0 0 1 5 0zm-.5 3A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13h7a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 11.5 3h-7zM5 6.5A1.5 1.5 0 0 1 6.5 5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3zM6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/>
               </svg>
@@ -48,7 +48,7 @@ defmodule DashboardWeb.Layout do
               </li>
 
               <li>
-                <a href="#" phx-click="render_sc9_gpu">
+                <a href="#" phx-click="render_gpu_9">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gpu-card" viewBox="0 0 16 16">
                 <path d="M4 8a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm7.5-1.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"/>
                 <path d="M0 1.5A.5.5 0 0 1 .5 1h1a.5.5 0 0 1 .5.5V4h13.5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5H2v2.5a.5.5 0 0 1-1 0V2H.5a.5.5 0 0 1-.5-.5Zm5.5 4a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM9 8a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z"/>
@@ -76,7 +76,7 @@ defmodule DashboardWeb.Layout do
 
             <ul>
               <li>
-                <a href="#">
+                <a href="#" phx-click="render_cpu_10">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cpu" viewBox="0 0 16 16">
                 <path d="M5 0a.5.5 0 0 1 .5.5V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2A2.5 2.5 0 0 1 14 4.5h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14a2.5 2.5 0 0 1-2.5 2.5v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14A2.5 2.5 0 0 1 2 11.5H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2A2.5 2.5 0 0 1 4.5 2V.5A.5.5 0 0 1 5 0zm-.5 3A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13h7a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 11.5 3h-7zM5 6.5A1.5 1.5 0 0 1 6.5 5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3zM6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/>
               </svg>
@@ -85,7 +85,7 @@ defmodule DashboardWeb.Layout do
               </li>
 
               <li>
-                <a href="#">
+                <a href="#" phx-click="render_gpu_10">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gpu-card" viewBox="0 0 16 16">
                 <path d="M4 8a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm7.5-1.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"/>
                 <path d="M0 1.5A.5.5 0 0 1 .5 1h1a.5.5 0 0 1 .5.5V4h13.5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5H2v2.5a.5.5 0 0 1-1 0V2H.5a.5.5 0 0 1-.5-.5Zm5.5 4a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM9 8a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z"/>
@@ -398,17 +398,34 @@ defmodule DashboardWeb.Layout do
           line-height: 150%;
           color: #1b253d;
         }
+
+        .content-wrap .info-boxes .info-box .box-content .medium {
+          display: block;
+          font-size: 1.5em;
+          line-height: 150%;
+          color: #1b253d;
+        }
+
+        .content-wrap .info-boxes .info-box .box-content .small {
+          width: 50px;
+          display: block;
+          font-size: 0.6em;
+          line-height: 150%;
+          word-wrap: break-word;
+          color: #1b253d;
+        }
+
         .content-wrap .info-boxes .info-box.active svg circle,
         .content-wrap .info-boxes .info-box.active svg path {
           fill: #4b84fe;
         }
-        .content-wrap .person-boxes {
+        .content-wrap .chart-boxes {
           padding: 0;
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
           grid-gap: 2em;
         }
-        .content-wrap .person-boxes .person-box {
+        .content-wrap .chart-boxes .chart-box {
           background: #F4F6F7;
           height: 320px;
           text-align: center;
@@ -416,27 +433,27 @@ defmodule DashboardWeb.Layout do
           border: 1px solid #ede8f0;
           border-radius: 20px;
         }
-        .content-wrap .person-boxes .person-box:nth-child(2n) .box-avatar .no-name {
+        .content-wrap .chart-boxes .chart-box:nth-child(2n) .box-avatar .no-name {
           background: #4b84fe;
         }
-        .content-wrap .person-boxes .person-box:nth-child(5n) .box-avatar .no-name {
+        .content-wrap .chart-boxes .chart-box:nth-child(5n) .box-avatar .no-name {
           background: #ffbb09;
         }
-        .content-wrap .person-boxes .person-box .box-avatar {
+        .content-wrap .chart-boxes .chart-box .box-avatar {
           width: 100px;
           height: 100px;
           border-radius: 50%;
           margin: 0px auto;
           overflow: hidden;
         }
-        .content-wrap .person-boxes .person-box .box-avatar img {
+        .content-wrap .chart-boxes .chart-box .box-avatar img {
           display: block;
           width: 100%;
           height: 100%;
           -o-object-fit: cover;
             object-fit: cover;
         }
-        .content-wrap .person-boxes .person-box .box-avatar .no-name {
+        .content-wrap .chart-boxes .chart-box .box-avatar .no-name {
           display: flex;
           align-items: center;
           justify-content: center;
@@ -449,22 +466,22 @@ defmodule DashboardWeb.Layout do
           height: 100%;
           background: #fa5b67;
         }
-        .content-wrap .person-boxes .person-box .box-bio {
+        .content-wrap .chart-boxes .chart-box .box-bio {
           white-space: no-wrap;
         }
-        .content-wrap .person-boxes .person-box .box-bio .bio-name {
+        .content-wrap .chart-boxes .chart-box .box-bio .bio-name {
           margin: 2em 0 0.75em;
           color: #1b253d;
           font-size: 1em;
           font-weight: 700;
           line-height: 100%;
         }
-        .content-wrap .person-boxes .person-box .box-bio .bio-position {
+        .content-wrap .chart-boxes .chart-box .box-bio .bio-position {
           margin: 0;
           font-size: 0.875em;
           line-height: 100%;
         }
-        .content-wrap .person-boxes .person-box .box-actions {
+        .content-wrap .chart-boxes .chart-box .box-actions {
           margin-top: 1.25em;
           padding-top: 1.25em;
           width: 100%;
@@ -473,7 +490,7 @@ defmodule DashboardWeb.Layout do
           align-items: center;
           justify-content: space-between;
         }
-        .content-wrap .person-boxes .person-box .box-actions button {
+        .content-wrap .chart-boxes .chart-box .box-actions button {
           border: 0;
           background: none;
           width: 32px;
@@ -481,67 +498,20 @@ defmodule DashboardWeb.Layout do
           margin: 0;
           padding: 0;
         }
-        .content-wrap .person-boxes .person-box .box-actions button svg {
+        .content-wrap .chart-boxes .chart-box .box-actions button svg {
           position: relative;
           top: 2px;
         }
-        .content-wrap .person-boxes .person-box .box-actions button svg path,
-        .content-wrap .person-boxes .person-box .box-actions button svg circle {
+        .content-wrap .chart-boxes .chart-box .box-actions button svg path,
+        .content-wrap .chart-boxes .chart-box .box-actions button svg circle {
           fill: #b6bbc6;
           transition: fill 0.15s ease;
         }
-        .content-wrap .person-boxes .person-box .box-actions button:hover svg path,
-        .content-wrap .person-boxes .person-box .box-actions button:hover svg circle {
+        .content-wrap .chart-boxes .chart-box .box-actions button:hover svg path,
+        .content-wrap .chart-boxes .chart-box .box-actions button:hover svg circle {
           fill: #2b3a60;
         }
 
-        .exc-tick {
-        stroke: grey;
-      }
-
-      .exc-tick text {
-        fill: grey;
-        stroke: none;
-      }
-
-      .exc-grid {
-        stroke: lightgrey;
-      }
-
-      .exc-legend {
-        stroke: black;
-      }
-
-      .exc-legend text {
-        fill: grey;
-        font-size: 0.8rem;
-        stroke: none;
-      }
-
-      <%# .exc-title {
-        fill: darkslategray;
-        font-size: 2.3rem;
-        stroke: none;
-      } %>
-      .exc-subtitle {
-        fill: darkgrey;
-        font-size: 1.0rem;
-        stroke: none;
-      }
-
-      .exc-domain {
-        stroke:  rgb(207, 207, 207);
-      }
-
-      .exc-barlabel-in {
-        fill: white;
-        font-size: 0.7rem;
-      }
-
-      .exc-barlabel-out {
-        fill: grey;
-        font-size: 0.7rem;
-      }
       </style>
     """
   end

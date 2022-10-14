@@ -8,6 +8,7 @@ defmodule Dashboard.Repo.Migrations.CreateCpuInfo do
       add :CPU_ECC, :string
       add :Memory_Train_ERR, :string
       add :Watchdog2, :string
+      add :sc_num, :decimal
 
       timestamps()
     end

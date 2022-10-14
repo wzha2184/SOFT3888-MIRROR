@@ -158,7 +158,7 @@ defmodule Dashboard.InfoHandler do
         where: t.'UUID' == ^uuid,
         order_by: [desc: t.id],
         limit: ^limit,
-        select: %{inserted_at: t.inserted_at, Temperature: t.'Temperature', totalMemory: t.totalMemory, freeMemory: t.freeMemory, power: t.power, uuid: t.'UUID'}
+        select: %{inserted_at: t.inserted_at, Temperature: t.'Temperature', totalMemory: t.totalMemory, freeMemory: t.freeMemory, power: t.power, uuid: t.'UUID', usedMemory: t.usedMemory, limitPower: t.limitPower, graphicsFrequency: t.graphicsFrequency, memoryFrequency: t.memoryFrequency, StreamingMultiprocessorFrequency: t.'StreamingMultiprocessorFrequency', fanSpeed: t.fanSpeed}
     Repo.all(q)
   end
 
@@ -168,8 +168,15 @@ defmodule Dashboard.InfoHandler do
       length(gpu_info) == 0 -> %{last_gpu_temp: "N/A", gpu_temp_svg: "gpu temp chart", gpu_free_mem_svg: "gpu free_mem_chart", gpu_power_svg: "gpu power chart"}
 
       true ->
+      # latest information
       [last_info] = get_gpu_info(uuid, 1)
       {:ok, last_gpu_temp} = Map.fetch(last_info, :Temperature)
+      {:ok, used_memory} = Map.fetch(last_info, :usedMemory)
+      {:ok, power} = Map.fetch(last_info, :power)
+      {:ok, limit_power} = Map.fetch(last_info, :limitPower)
+      {:ok, streaming_multiprocessor_frequency} = Map.fetch(last_info, :StreamingMultiprocessorFrequency)
+
+      #plots
       plot_options = %{
         top_margin: 5,
         right_margin: 5,
@@ -178,17 +185,17 @@ defmodule Dashboard.InfoHandler do
         show_x_axis: true,
         show_y_axis: true,
         legend_setting: :legend_right,
-        mapping: %{x_col: "timestamp", y_cols: ["temp", "total_mem", "free_mem", "power"]},
+        mapping: %{x_col: "timestamp", y_cols: ["temp", "total_mem", "free_mem", "power", "graphics_frequency"]},
       }
       # Generate the SVG chart
       contex_dataset =
         gpu_info
         # Flatten the map into a list of lists
-        |> Enum.map(fn %{inserted_at: timestamp, Temperature: temp, totalMemory: total_mem, freeMemory: free_mem, power: power} ->
-          [timestamp, Decimal.to_float(temp), Decimal.to_float(total_mem), Decimal.to_float(free_mem), Decimal.to_float(power)]
+        |> Enum.map(fn %{inserted_at: timestamp, Temperature: temp, totalMemory: total_mem, freeMemory: free_mem, power: power, uuid: uuid, usedMemory: used_memory, limitPower: limit_power, graphicsFrequency: graphics_frequency, memoryFrequency: memory_frequency, StreamingMultiprocessorFrequency: streaming_multiprocessor_frequency, fanSpeed: fan_speed} ->
+          [timestamp, Decimal.to_float(temp), Decimal.to_float(total_mem), Decimal.to_float(free_mem), Decimal.to_float(power), uuid, used_memory, limit_power, Decimal.to_float(graphics_frequency), Decimal.to_float(memory_frequency), streaming_multiprocessor_frequency, Decimal.to_float(fan_speed)]
         end)
         # Assign legend titles using list indices
-        |> Contex.Dataset.new(["timestamp", "temp", "total_mem", "free_mem", "power"])
+        |> Contex.Dataset.new(["timestamp", "temp", "total_mem", "free_mem", "power", "uuid", "used_memory", "limit_power", "graphics_frequency", "memory_frequency", "streaming_multiprocessor_frequency", "fan_speed"])
 
       gpu_temp_chart =
         contex_dataset
@@ -241,7 +248,62 @@ defmodule Dashboard.InfoHandler do
           # Generate SVG
           |> Contex.Plot.to_svg()
 
-          %{last_gpu_temp: last_gpu_temp, gpu_temp_svg: gpu_temp_chart, gpu_free_mem_svg: gpu_free_mem_chart, gpu_power_svg: gpu_power_chart}
+        # graphicsFrequency chart
+        gpu_graphics_frequency_chart =
+          contex_dataset
+          # Specify plot type (LinePlot), SVG dimensions, column mapping, title, label and legend
+          |> Contex.Plot.new(
+            Contex.LinePlot,
+            600,
+            300,
+            [plot_options: plot_options, title: "GPU Graphics Frequency",
+            mapping: %{x_col: "timestamp", y_cols: ["graphics_frequency", "temp"]},
+            x_label: "Time",
+            y_label: "Frequency/Temperature"
+          ]
+
+          )
+          # Generate SVG
+          |> Contex.Plot.to_svg()
+
+        # memoryFrequency chart
+        gpu_memory_frequency_chart =
+          contex_dataset
+          # Specify plot type (LinePlot), SVG dimensions, column mapping, title, label and legend
+          |> Contex.Plot.new(
+            Contex.LinePlot,
+            600,
+            300,
+            [plot_options: plot_options, title: "GPU Memory Frequency",
+            mapping: %{x_col: "timestamp", y_cols: ["memory_frequency", "temp"]},
+            x_label: "Time",
+            y_label: "Frequency/Temperature"
+          ]
+
+
+          )
+          # Generate SVG
+          |> Contex.Plot.to_svg()
+
+        # fanSpeed chart
+        gpu_fan_speed_chart =
+          contex_dataset
+          # Specify plot type (LinePlot), SVG dimensions, column mapping, title, label and legend
+          |> Contex.Plot.new(
+            Contex.LinePlot,
+            600,
+            300,
+            [plot_options: plot_options, title: "GPU Fan Speed",
+            mapping: %{x_col: "timestamp", y_cols: ["fan_speed", "temp"]},
+            x_label: "Time",
+            y_label: "speed/Temperature"
+          ]
+
+          )
+          # Generate SVG
+          |> Contex.Plot.to_svg()
+
+          %{last_streaming_multiprocessor_frequency: streaming_multiprocessor_frequency, last_limit_power: limit_power, last_power: power, last_used_memory: used_memory,last_gpu_temp: last_gpu_temp, gpu_temp_svg: gpu_temp_chart, gpu_free_mem_svg: gpu_free_mem_chart, gpu_power_svg: gpu_power_chart, gpu_graphics_frequency_chart: gpu_graphics_frequency_chart, gpu_memory_frequency_chart: gpu_memory_frequency_chart, gpu_fan_speed_chart: gpu_fan_speed_chart, uuid: uuid}
     end
   end
 
@@ -303,29 +365,48 @@ defmodule Dashboard.InfoHandler do
       fn ->
 
         {_, list} = JSON.decode(Dashboard.get_super_clusters_data())
+
         # # sc_status table
         # changeset = Sc_status.changeset(%Sc_status{}, list["sc_status"])
         # Repo.insert(changeset)
 
-        # BMC table
-        changeset = Bmc.changeset(%Bmc{}, list["BMC"]["BMC1"])
-        Repo.insert(changeset)
+        # # BMC table
+        # changeset = Bmc.changeset(%Bmc{}, list["BMC"]["BMC1"])
+        # Repo.insert(changeset)
 
+        # sc9
         # CPU Freq table
-        changeset = CpuFreq.changeset(%CpuFreq{}, list["CPU"]["cpu_freq"])
+        cpu_freq_sc9 = Map.put(list["CPU"]["sc9"]["cpu_freq"], "sc_num", 9)
+        changeset = CpuFreq.changeset(%CpuFreq{}, cpu_freq_sc9)
         Repo.insert(changeset)
 
         # GPU table 1
-        changeset = Gpu.changeset(%Gpu{}, list["GPU"]["GPU-f11c8a14-3c9b-48e8-8c02-7da2495d17ee"])
+        gpu_sc9 = Map.put(list["GPU"]["sc9"]["GPU-f11c8a14-3c9b-48e8-8c02-7da2495d17ee"], "sc_num", 9)
+        changeset = Gpu.changeset(%Gpu{}, gpu_sc9)
         Repo.insert(changeset)
-
-        # GPU table 2
-        changeset = Gpu.changeset(%Gpu{}, list["GPU"]["GPU-5caf1987-9e67-8051-0080-9384b24a66db"])
-        Repo.insert(changeset)
-
-
         # IO.inspect changeset
 
+        # GPU table 2
+        gpu_sc9 = Map.put(list["GPU"]["sc9"]["GPU-5caf1987-9e67-8051-0080-9384b24a66db"], "sc_num", 9)
+        changeset = Gpu.changeset(%Gpu{}, gpu_sc9)
+        Repo.insert(changeset)
+
+        # sc10
+        # CPU Freq table
+        cpu_freq_sc10 = Map.put(list["CPU"]["sc10"]["cpu_freq"], "sc_num", 10)
+        changeset = CpuFreq.changeset(%CpuFreq{}, cpu_freq_sc10)
+        Repo.insert(changeset)
+
+        # GPU table 1
+        gpu_sc10 = Map.put(list["GPU"]["sc10"]["GPU-d1beb192-bcec-67d2-4a5f-51108e4f03d1"], "sc_num", 10)
+        changeset = Gpu.changeset(%Gpu{}, gpu_sc10)
+        Repo.insert(changeset)
+        # IO.inspect changeset
+
+        # GPU table 2
+        gpu_sc10 = Map.put(list["GPU"]["sc10"]["GPU-70987dcb-d543-54bc-8ac5-fc3cfc530043"], "sc_num", 10)
+        changeset = Gpu.changeset(%Gpu{}, gpu_sc10)
+        Repo.insert(changeset)
       end)
   end
 

@@ -20,7 +20,7 @@
           </div>
 
             <div class="box-content">
-              <span class="big"><%= @local_mechine_info[:uptime]/1000 %> s </span>
+              <span class="medium"><%= @local_mechine_info[:uptime]/1000 %> s </span>
               Current Uptime
             </div>
           </div>
@@ -58,21 +58,21 @@
             </div>
 
             <div class="box-content">
-              <span class="big"><%= @local_mechine_info[:time] %> </span>
+              <span class="medium"><%= @local_mechine_info[:time] %> </span>
               Current Time
             </div>
           </div>
         </section>
 
-        <section class="person-boxes">
-          <div class="person-box">
+        <section class="chart-boxes">
+          <div class="chart-box">
             <div class="chart">
             <%= #@bmc_cpu_temp_svg %>
             <%= @sc_info[:charts][:gpu_temp_svg] %>
             </div>
           </div>
 
-          <div class="person-box">
+          <div class="chart-box">
             <div class="chart">
             <%= #@cpu_chart_svg %>
             <%= @sc_info[:charts][:gpu_free_mem_svg] %>
@@ -80,39 +80,39 @@
 
           </div>
 
-          <div class="person-box">
+          <div class="chart-box">
             <div class="chart">
             <%= #@bmc_lan_temp_svg %>
             <%= @sc_info[:charts][:gpu_power_svg] %>
             </div>
           </div>
 
-          <div class="person-box">
+          <div class="chart-box">
             <div class="chart">
             <%= @sc_info[:charts][:gpu_power_svg] %>
             </div>
           </div>
 
-          <div class="person-box">
+          <div class="chart-box">
             <div class="chart">
             <%= @sc_info[:charts][:gpu_power_svg] %>
             </div>
           </div>
 
-          <div class="person-box">
+          <div class="chart-box">
             <div class="chart">
             <%= @sc_info[:charts][:gpu_power_svg] %>
             </div>
 
           </div>
 
-          <div class="person-box">
+          <div class="chart-box">
             <div class="chart">
             <%= @sc_info[:charts][:gpu_power_svg] %>
             </div>
           </div>
 
-          <div class="person-box">
+          <div class="chart-box">
             <div class="chart">
             <%= @sc_info[:charts][:gpu_power_svg] %>
             </div>

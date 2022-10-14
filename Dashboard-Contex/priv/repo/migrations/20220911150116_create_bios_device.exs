@@ -8,6 +8,7 @@ defmodule Dashboard.Repo.Migrations.CreateBiosDevice do
       add :bios_device_type, :text
       add :bios_device_status, :text
       add :bios_device_description, :text
+      add :sc_num, :decimal
 
     end
 
