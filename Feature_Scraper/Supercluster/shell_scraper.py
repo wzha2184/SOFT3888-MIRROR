@@ -19,7 +19,7 @@ class ShellScraper:
             self.get_PCIe()
             self.result["BIOS"]["status"] = "OK"
         except:
-            self.result["BIOS"]["status"] = "error - Problem occours when scraping data from BIOS"
+            self.result["BIOS"]["status"] = "error - Problem occourred when scraping data from BIOS"
 
     def get_CPU_frequency(self) -> None:
         try:
@@ -38,7 +38,7 @@ class ShellScraper:
             self.result["CPU"]["cpu_freq"]["cpu_max_freq"] = cpu_max_freq
             self.result["CPU"]["status"] = "OK"
         except:
-            self.result["CPU"]["status"] = "error - Problem occours when scraping data from CPU"
+            self.result["CPU"]["status"] = "error - Problem occourred when scraping data from CPU"
 
     def get_CPU_serial_number(self) -> None:
         # Baseboard (Motherboard) serial number
