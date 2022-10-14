@@ -17,7 +17,11 @@ defmodule Dashboard do
   end
 
   def get_super_clusters_data() do
-    call_python(:run, :get_result, ["usyd-10a", "6r7mYcxLHXLq8Rgu", "url_config.json"])
+    call_python(:run, :get_sc_result, ["usyd-10a", "6r7mYcxLHXLq8Rgu", "config.json"])
+  end
+
+  def get_bmc_data() do
+    call_python(:run, :get_bmc_result, ["config.json"])
   end
 
   defp default_instance() do

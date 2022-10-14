@@ -1,1 +1,1 @@
-python3 run.py usyd-10a 6r7mYcxLHXLq8Rgu url_config.json
+python3 run.py usyd-10a 6r7mYcxLHXLq8Rgu config.json

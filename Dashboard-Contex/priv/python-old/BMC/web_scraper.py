@@ -17,7 +17,7 @@ class WebAccesser:
         self._options.add_argument('--headless')
         self._options.add_argument('--disable-dev-shm-usage')
 
-        self.driver =  webdriver.Chrome(ChromeDriverManager().install(), options=self._options)
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self._options)
         
     def login(self) -> None:
         self.driver.get(self.url + '/#login')
@@ -71,41 +71,40 @@ class WebScraper:
             elif div.get("class") is not None and " ".join(div.get("class")) == "row animated fadeInUp delay-1":
                 normal_sensors = div
 
-        if(critical_sensors != None):
-            # Critical sensors(CPU)
-            CPU_info = critical_sensors.find_all("div")
-            name = None
-            value = None
-            for div in CPU_info:
-                if " ".join(div.get("class")) == "percentage":
-                    value = div.text
-                if " ".join(div.get("class")) == "sensor-title":
-                    name = div.text
+        # Critical sensors(CPU)
+        CPU_info = critical_sensors.find_all("div")
+        name = None
+        value = None
+        for div in CPU_info:
+            if " ".join(div.get("class")) == "percentage":
+                value = div.text
+            if " ".join(div.get("class")) == "sensor-title":
+                name = div.text
 
-                if name is not None and value is not None:
-                    self.result["BMC"][self.machin_name][name] = value.split(" ")[0].replace("RPM", "")
-                    name = None
-                    value = None
-        
-            # Descrete sensors
-            descrete_info = descrete_sensors.find_all("tr")
-            for row in descrete_info:
-                state = []
-                for col in row.find_all("td"):
-                    if col.get("class") is None or "".join(col.get("class")) != "hide":
-                        state.append(col.text.strip())
-                    if len(state) == 2:
-                        self.result["BMC"][self.machin_name][state[0]] = state[1].split(" ")[0].replace("RPM", "")
-                        state = []
+            if name is not None and value is not None:
+                self.result["BMC"][self.machin_name][name] = value.split(" ")[0].replace("RPM", "")
+                name = None
+                value = None
 
-            normal_info = normal_sensors.find_all("tr")
-            for row in normal_info:
-                state = []
-                for col in row.find_all("td"):
+        # Descrete sensors
+        descrete_info = descrete_sensors.find_all("tr")
+        for row in descrete_info:
+            state = []
+            for col in row.find_all("td"):
+                if col.get("class") is None or "".join(col.get("class")) != "hide":
                     state.append(col.text.strip())
-                    if len(state) == 2:
-                        self.result["BMC"][self.machin_name][state[0]] = state[1].split(" ")[0].replace("RPM", "")
-                        state = []
+                if len(state) == 2:
+                    self.result["BMC"][self.machin_name][state[0]] = state[1].split(" ")[0].replace("RPM", "")
+                    state = []
+
+        normal_info = normal_sensors.find_all("tr")
+        for row in normal_info:
+            state = []
+            for col in row.find_all("td"):
+                state.append(col.text.strip())
+                if len(state) == 2:
+                    self.result["BMC"][self.machin_name][state[0]] = state[1].split(" ")[0].replace("RPM", "")
+                    state = []
 
 
 if __name__ == "__main__":

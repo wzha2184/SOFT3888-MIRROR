@@ -21,6 +21,7 @@ defmodule Dashboard.Repo.Migrations.CreateGpu do
       add :power, :decimal
       add :totalMemory, :decimal
       add :usedMemory, :decimal
+      add :sc_num, :decimal
 
       timestamps()
     end

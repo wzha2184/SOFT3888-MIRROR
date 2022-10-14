@@ -21,6 +21,8 @@ defmodule DashboardWeb.Router do
 
     live "/", PageLive, :index
 
+    # live "/",
+
     live "/chat", ChatLive.Index
 
   end
