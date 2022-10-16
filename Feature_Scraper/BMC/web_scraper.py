@@ -51,70 +51,89 @@ class WebScraper:
 
         self.result = {}
 
-        self.get_info()
+        try:
+            self.web_accesser.login()
+            self.get_sensors_info()
+            self.get_power_control_info()
+            self.result["status"] = "OK"
+        except:
+            self.result["status"] = "error - Not able to login BMC of {}".format(self.machin_name)
 
     def get_bmc_result(self) -> dict:
         return self.result
 
-    def get_info(self) -> None:
-        try:
-            self.web_accesser.login()
-            html_doc = self.web_accesser.get_page("sensors")
+    def get_sensors_info(self) -> None:
+        html_doc = self.web_accesser.get_page("sensors")
 
-            soup = BeautifulSoup(html_doc, 'html.parser')
-            critical_sensors = None
-            descrete_sensors = None
-            normal_sensors = None
+        soup = BeautifulSoup(html_doc, 'html.parser')
+        critical_sensors = None
+        descrete_sensors = None
+        normal_sensors = None
 
-            info = soup.find_all("div")
-            for div in info:
-                if div.get("class") is not None and " ".join(div.get("class")) == "row animated fadeInUp":
-                    critical_sensors = div
-                elif div.get("class") is not None and " ".join(div.get("class")) == "row animated fadeInUp delay-0":
-                    descrete_sensors = div
-                elif div.get("class") is not None and " ".join(div.get("class")) == "row animated fadeInUp delay-1":
-                    normal_sensors = div
+        info = soup.find_all("div")
+        for div in info:
+            if div.get("class") is not None and " ".join(div.get("class")) == "row animated fadeInUp":
+                critical_sensors = div
+            elif div.get("class") is not None and " ".join(div.get("class")) == "row animated fadeInUp delay-0":
+                descrete_sensors = div
+            elif div.get("class") is not None and " ".join(div.get("class")) == "row animated fadeInUp delay-1":
+                normal_sensors = div
 
-            # Critical sensors(CPU)
-            CPU_info = critical_sensors.find_all("div")
-            name = None
-            value = None
-            for div in CPU_info:
-                if " ".join(div.get("class")) == "percentage":
-                    value = div.text
-                if " ".join(div.get("class")) == "sensor-title":
-                    name = div.text
+        # Critical sensors(CPU)
+        CPU_info = critical_sensors.find_all("div")
+        name = None
+        value = None
+        for div in CPU_info:
+            if " ".join(div.get("class")) == "percentage":
+                value = div.text
+            if " ".join(div.get("class")) == "sensor-title":
+                name = div.text
 
-                if name is not None and value is not None:
-                    self.result[name] = value.split(" ")[0].replace("RPM", "")
-                    name = None
-                    value = None
+            if name is not None and value is not None:
+                self.result[name] = value.split(" ")[0].replace("RPM", "")
+                name = None
+                value = None
 
-            # Descrete sensors
-            descrete_info = descrete_sensors.find_all("tr")
-            for row in descrete_info:
-                state = []
-                for col in row.find_all("td"):
-                    if col.get("class") is None or "".join(col.get("class")) != "hide":
-                        state.append(col.text.strip())
-                    if len(state) == 2:
-                        self.result[state[0]] = state[1].split(" ")[0].replace("RPM", "")
-                        state = []
-
-            normal_info = normal_sensors.find_all("tr")
-            for row in normal_info:
-                state = []
-                for col in row.find_all("td"):
+        # Descrete sensors
+        descrete_info = descrete_sensors.find_all("tr")
+        for row in descrete_info:
+            state = []
+            for col in row.find_all("td"):
+                if col.get("class") is None or "".join(col.get("class")) != "hide":
                     state.append(col.text.strip())
-                    if len(state) == 2:
-                        self.result[state[0]] = state[1].split(" ")[0].replace("RPM", "")
-                        state = []
+                if len(state) == 2:
+                    self.result[state[0]] = state[1].split(" ")[0].replace("RPM", "")
+                    state = []
 
-            # Power panel
+        normal_info = normal_sensors.find_all("tr")
+        for row in normal_info:
+            state = []
+            for col in row.find_all("td"):
+                state.append(col.text.strip())
+                if len(state) == 2:
+                    self.result[state[0]] = state[1].split(" ")[0].replace("RPM", "")
+                    state = []
 
-            self.result["status"] = "OK"
-        except:
-            self.result["status"] = "error"
+
+    def get_power_control_info(self) -> None:
+        power_selection = {
+            "idpower_off_command":"Power Off", 
+            "idpower_on_command": "Power On", 
+            "idpower_cycle_command": "Power Cycle", 
+            "idpower_reset_command": "Hard Reset",
+            "idpower_acpi_command": "ACPI Shutdown"
+            }
+
+        html_doc = self.web_accesser.get_page("power-control")
+
+        soup = BeautifulSoup(html_doc, 'html.parser')
+
+        info = soup.find_all("div")
+        for div in info:
+            if div.get("class") is not None and len(div.get("class")) >= 2:
+                if div.get("class")[0] == "iradio_square-blue" and div.get("class")[1] == "checked":
+                    power = power_selection[div.input.get("id")]
+                    self.result["power_control"] = power
 
 
 def run_web_scraper(url_config: str) -> dict:

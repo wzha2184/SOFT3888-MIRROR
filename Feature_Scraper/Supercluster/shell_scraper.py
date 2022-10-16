@@ -1,6 +1,7 @@
 import re
 import psutil
 import subprocess
+import json
 
 
 class ShellScraper:
@@ -19,7 +20,7 @@ class ShellScraper:
             self.get_PCIe()
             self.result["BIOS"]["status"] = "OK"
         except:
-            self.result["BIOS"]["status"] = "error"
+            self.result["BIOS"]["status"] = "error - Problem occourred when scraping data from BIOS"
 
     def get_CPU_frequency(self) -> None:
         try:
@@ -38,7 +39,7 @@ class ShellScraper:
             self.result["CPU"]["cpu_freq"]["cpu_max_freq"] = cpu_max_freq
             self.result["CPU"]["status"] = "OK"
         except:
-            self.result["CPU"]["status"] = "error"
+            self.result["CPU"]["status"] = "error - Problem occourred when scraping data from CPU"
 
     def get_CPU_serial_number(self) -> None:
         # Baseboard (Motherboard) serial number
@@ -122,4 +123,4 @@ class ShellScraper:
     
 if __name__ == "__main__":
     shell_scraper = ShellScraper()
-    print(shell_scraper.get_shell_result())
+    print(json.dumps(shell_scraper.get_shell_result(), indent=2))
