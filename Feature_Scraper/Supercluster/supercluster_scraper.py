@@ -43,6 +43,10 @@ def run_supercluster_scraper(username: str, password: str, url_config: str) -> d
 
                 str_result = ssh_stdout.read().decode('utf-8').replace("\'", "\"")
                 json_result = json.loads(str_result)
+                
+                json_result["GPU"]["status"] = "OK"
+                json_result["CPU"]["status"] = "OK"
+                json_result["BIOS"]["status"] = "OK"
             
             except:
                 json_result["GPU"]["status"] = "error - Not able to login {}".format(sc)
