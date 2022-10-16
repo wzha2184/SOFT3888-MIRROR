@@ -1,6 +1,7 @@
 import re
 import psutil
 import subprocess
+import json
 
 
 class ShellScraper:
@@ -122,4 +123,4 @@ class ShellScraper:
     
 if __name__ == "__main__":
     shell_scraper = ShellScraper()
-    print(shell_scraper.get_shell_result())
+    print(json.dumps(shell_scraper.get_shell_result(), indent=2))
