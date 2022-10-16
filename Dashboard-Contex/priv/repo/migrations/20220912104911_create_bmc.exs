@@ -16,6 +16,7 @@ defmodule Dashboard.Repo.Migrations.CreateBmc do
       add :bmc_cpu_18v, :decimal
       add :bmc_cpu_18v_s5, :decimal
       add :bmc_33v, :decimal
+      add :bmc_cpu_33v, :decimal
       add :bmc_pch_cldo, :decimal
       add :bmc_vcore, :decimal
       add :bmc_vddio_abcd, :decimal

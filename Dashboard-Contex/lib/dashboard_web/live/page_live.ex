@@ -45,19 +45,6 @@ defmodule DashboardWeb.PageLive do
     # """
   end
 
-  # def mount(_params, _session, socket) do
-
-  #   tref = if connected?(socket) do
-  #     schedule_refresh(@initial_state[:settings][:local_refresh_interval], %{tref: nil})
-  #     schedule_run_script(@initial_state[:settings][:sc_interval], %{tref: nil})
-  #     ## Use Javascript to make live chart
-  #     # :timer.send_interval(10000, self(), :update_chart)
-  #   end
-  #   {
-  #   :ok,
-  #     initial_state(assign(socket, :tref, tref))
-  #   }
-  # end
 
   def mount(_session, _,%{assigns: _} = socket) do
     tref = if connected?(socket) do
@@ -180,6 +167,7 @@ defmodule DashboardWeb.PageLive do
       {:ok, tref} -> tref
       _ -> nil
     end
+    # :timer.send_interval(interval, self(), :run_script)
   end
 
   def handle_event("render_" <> view_num, _path, socket) do

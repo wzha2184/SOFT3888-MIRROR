@@ -4,7 +4,7 @@ defmodule Dashboard.Repo.Migrations.CreateServerStatus do
   def change do
     create table(:server_status) do
       add :type, :string
-      add :super_cluster_number, :string
+      add :super_cluster_number, :decimal
       add :status, :string
 
       # timestamps(autogenerate: {MyThing, :local_time, []})

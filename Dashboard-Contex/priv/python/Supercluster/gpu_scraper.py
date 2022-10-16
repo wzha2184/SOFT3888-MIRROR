@@ -66,7 +66,7 @@ class GPUScraper:
                 self.get_gpu_fan(i)
                 self.result[igpu.get_device(i).uuid]["status"] = "OK"
             except:
-                self.result[igpu.get_device(i).uuid]["status"] = "error"
+                self.result[igpu.get_device(i).uuid]["status"] = "error - Problem occurred when scraping data from GPU"
 
 
 if __name__ == "__main__":

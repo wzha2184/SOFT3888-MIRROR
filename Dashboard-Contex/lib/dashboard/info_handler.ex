@@ -6,7 +6,7 @@ defmodule Dashboard.InfoHandler do
   alias Dashboard.Database.CpuFreq
   alias Dashboard.Database.Bmc
   alias Dashboard.Database.Gpu
-  alias Dashboard.Database.Sc_status
+  alias Dashboard.Database.ServerStatus
   alias Dashboard.Repo
   import Ecto.Query
   import Contex
@@ -375,38 +375,55 @@ defmodule Dashboard.InfoHandler do
         # Repo.insert(changeset)
 
         # sc9
-        # CPU Freq table
-        cpu_freq_sc9 = Map.put(list["CPU"]["sc9"]["cpu_freq"], "sc_num", 9)
-        changeset = CpuFreq.changeset(%CpuFreq{}, cpu_freq_sc9)
-        Repo.insert(changeset)
+        if list["CPU"]["sc9"]["status"] == "OK" do
+          # CPU Freq table
+          cpu_freq_sc9 = Map.put(list["CPU"]["sc9"]["cpu_freq"], "sc_num", 9)
+          changeset = CpuFreq.changeset(%CpuFreq{}, cpu_freq_sc9)
+          Repo.insert(changeset)
+        else
+          status_info = %{} |> Map.put("type", "super cluster error")
+                            |> Map.put("super_cluster_number", 9)
+                            |> Map.put("status", list["CPU"]["sc9"]["status"])
+          IO.inspect status_info
+          changeset = ServerStatus.changeset(%ServerStatus{}, status_info)
+          IO.inspect changeset
+          Repo.insert(changeset)
+        end
 
-        # GPU table 1
-        gpu_sc9 = Map.put(list["GPU"]["sc9"]["GPU-f11c8a14-3c9b-48e8-8c02-7da2495d17ee"], "sc_num", 9)
-        changeset = Gpu.changeset(%Gpu{}, gpu_sc9)
-        Repo.insert(changeset)
-        # IO.inspect changeset
+        if list["GPU"]["sc9"]["status"] == "OK" do
+          # GPU table 1
+          gpu_sc9 = Map.put(list["GPU"]["sc9"]["GPU-f11c8a14-3c9b-48e8-8c02-7da2495d17ee"], "sc_num", 9)
+          changeset = Gpu.changeset(%Gpu{}, gpu_sc9)
+          Repo.insert(changeset)
+          # IO.inspect changeset
 
-        # GPU table 2
-        gpu_sc9 = Map.put(list["GPU"]["sc9"]["GPU-5caf1987-9e67-8051-0080-9384b24a66db"], "sc_num", 9)
-        changeset = Gpu.changeset(%Gpu{}, gpu_sc9)
-        Repo.insert(changeset)
+          # GPU table 2
+          gpu_sc9 = Map.put(list["GPU"]["sc9"]["GPU-5caf1987-9e67-8051-0080-9384b24a66db"], "sc_num", 9)
+          changeset = Gpu.changeset(%Gpu{}, gpu_sc9)
+          Repo.insert(changeset)
+        end
 
         # sc10
-        # CPU Freq table
-        cpu_freq_sc10 = Map.put(list["CPU"]["sc10"]["cpu_freq"], "sc_num", 10)
-        changeset = CpuFreq.changeset(%CpuFreq{}, cpu_freq_sc10)
-        Repo.insert(changeset)
+        if list["CPU"]["sc10"]["status"] == "OK" do
+          # CPU Freq table
+          cpu_freq_sc10 = Map.put(list["CPU"]["sc10"]["cpu_freq"], "sc_num", 10)
+          changeset = CpuFreq.changeset(%CpuFreq{}, cpu_freq_sc10)
+          Repo.insert(changeset)
+        end
 
-        # GPU table 1
-        gpu_sc10 = Map.put(list["GPU"]["sc10"]["GPU-d1beb192-bcec-67d2-4a5f-51108e4f03d1"], "sc_num", 10)
-        changeset = Gpu.changeset(%Gpu{}, gpu_sc10)
-        Repo.insert(changeset)
-        # IO.inspect changeset
+        if list["GPU"]["sc10"]["status"] == "OK" do
+          # GPU table 1
+          gpu_sc10 = Map.put(list["GPU"]["sc10"]["GPU-d1beb192-bcec-67d2-4a5f-51108e4f03d1"], "sc_num", 10)
+          changeset = Gpu.changeset(%Gpu{}, gpu_sc10)
+          Repo.insert(changeset)
+          # IO.inspect changeset
 
-        # GPU table 2
-        gpu_sc10 = Map.put(list["GPU"]["sc10"]["GPU-70987dcb-d543-54bc-8ac5-fc3cfc530043"], "sc_num", 10)
-        changeset = Gpu.changeset(%Gpu{}, gpu_sc10)
-        Repo.insert(changeset)
+          # GPU table 2
+          gpu_sc10 = Map.put(list["GPU"]["sc10"]["GPU-70987dcb-d543-54bc-8ac5-fc3cfc530043"], "sc_num", 10)
+          changeset = Gpu.changeset(%Gpu{}, gpu_sc10)
+          Repo.insert(changeset)
+        end
+
       end)
   end
 
