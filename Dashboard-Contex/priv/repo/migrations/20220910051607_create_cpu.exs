@@ -13,9 +13,12 @@ defmodule Dashboard.Repo.Migrations.CreateCpu do
       add :cpu_min_freq, :decimal
       add :sc_num, :decimal
 
+      # timestamps(autogenerate: {MyThing, :local_time, []})
       timestamps()
     end
+  end
 
-
+  def local_time do
+    DateTime.now!("Australia/Sydney") |> DateTime.to_naive()
   end
 end

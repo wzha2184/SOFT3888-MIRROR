@@ -13,9 +13,12 @@ defmodule Dashboard.Repo.Migrations.CreateBiosPcie do
       add :bios_pcie_bus_address, :text
       add :sc_num, :decimal
 
+      # timestamps(autogenerate: {MyThing, :local_time, []})
       timestamps()
-
     end
+  end
 
+  def local_time do
+    DateTime.now!("Australia/Sydney") |> DateTime.to_naive()
   end
 end

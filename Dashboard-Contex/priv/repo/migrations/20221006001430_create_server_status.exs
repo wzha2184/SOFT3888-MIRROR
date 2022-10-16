@@ -1,12 +1,11 @@
-defmodule Dashboard.Repo.Migrations.CreateCpuFreq do
+defmodule Dashboard.Repo.Migrations.CreateServerStatus do
   use Ecto.Migration
 
   def change do
-    create table(:cpu_freq) do
-      add :cpu_current_freq, :decimal
-      add :cpu_min_freq, :decimal
-      add :cpu_max_freq, :decimal
-      add :sc_num, :decimal
+    create table(:server_status) do
+      add :type, :string
+      add :super_cluster_number, :string
+      add :status, :string
 
       # timestamps(autogenerate: {MyThing, :local_time, []})
       timestamps()

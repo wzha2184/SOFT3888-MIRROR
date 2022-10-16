@@ -73,7 +73,8 @@ defmodule DashboardWeb.PageLive do
 
   def get_all_sc_info(sc_number) do
 
-    IO.inspect sc_number
+    # IO.inspect sc_number
+
     # # Check if data exists in the database
     # gpu_info = get_gpu_info(1)
     # [last_info] = cond do

@@ -10,7 +10,12 @@ defmodule Dashboard.Repo.Migrations.CreateBiosDevice do
       add :bios_device_description, :text
       add :sc_num, :decimal
 
+      # timestamps(autogenerate: {MyThing, :local_time, []})
+      timestamps()
     end
+  end
 
+  def local_time do
+    DateTime.now!("Australia/Sydney") |> DateTime.to_naive()
   end
 end
