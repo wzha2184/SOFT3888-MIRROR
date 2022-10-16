@@ -27,14 +27,27 @@ def run_supercluster_scraper(username: str, password: str, url_config: str) -> d
         for sc in superclusters.keys():
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(superclusters[sc]["IP"], username=username, password=password)
 
-            path = "soft3888_tu12_04_re_p39/Feature_Scraper/Supercluster"
-            command = "cd {path}; echo 6r7mYcxLHXLq8Rgu | sudo -S -k python3 supercluster_scraper.py".format(path=path)
-            ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
+            json_result = {
+                "GPU":{},
+                "CPU": {},
+                "BIOS": {}
+                }
 
-            str_result = ssh_stdout.read().decode('utf-8').replace("\'", "\"")
-            json_result = json.loads(str_result)
+            try:
+                ssh.connect(superclusters[sc]["IP"], username=username, password=password)
+
+                path = "soft3888_tu12_04_re_p39/Feature_Scraper/Supercluster"
+                command = "cd {path}; echo 6r7mYcxLHXLq8Rgu | sudo -S -k python3 supercluster_scraper.py".format(path=path)
+                ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
+
+                str_result = ssh_stdout.read().decode('utf-8').replace("\'", "\"")
+                json_result = json.loads(str_result)
+            
+            except:
+                json_result["GPU"]["status"] = "error - Not able to login {}".format(sc)
+                json_result["CPU"]["status"] = "error - Not able to login {}".format(sc)
+                json_result["BIOS"]["status"] = "error - Not able to login {}".format(sc)
 
             result["GPU"][sc] = json_result["GPU"]
             result["CPU"][sc] = json_result["CPU"]
@@ -44,8 +57,5 @@ def run_supercluster_scraper(username: str, password: str, url_config: str) -> d
 
 
 if __name__ == "__main__":
-    result = get_supercluster_result()
-    targets = ['GPU', 'CPU', 'BIOS']
-    for t in targets:
-        assert t in str(result)
-    print(result)
+    result = run_supercluster_scraper("usyd-10a", "6r7mYcxLHXLq8Rgu", "..\\config.json")
+    print(json.dumps(result, indent=2))
