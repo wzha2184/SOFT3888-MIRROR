@@ -3,9 +3,9 @@
         <h1>Basic Inforamtion</h1>
 
         <div class="action">
-          <%# <button phx-click="add-button">
-            Click Me!
-          </button> %>
+          <button phx-click="notify-button">
+            Discord Bot
+          </button>
         </div>
       </header>
 
@@ -31,7 +31,7 @@
             </div>
 
             <div class="box-content">
-              <span class="big"><%=@sc_info[:last_info][:sc_9_status] %></span>
+              <span class="big"><%=@sc_info[:last_info][:server_status][:sc_9_status] %></span>
               Current Supercluster Status
             </div>
           </div>

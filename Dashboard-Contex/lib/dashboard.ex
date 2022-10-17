@@ -24,6 +24,10 @@ defmodule Dashboard do
     call_python(:run, :get_bmc_result, ["config.json"])
   end
 
+  def call_discord_bot(info) do
+    call_python(:alertBOT, :run, [info])
+  end
+
   defp default_instance() do
     #Load all modules in our priv/python directory
     path = [:code.priv_dir(:dashboard), "python"]

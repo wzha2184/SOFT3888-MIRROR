@@ -30,4 +30,4 @@ if __name__ == "__main__":
         config_path = sys.argv[3]
         
         print(get_sc_result(username, password, config_path))
-        print(get_bmc_result(config_path))
+        # print(get_bmc_result(config_path))

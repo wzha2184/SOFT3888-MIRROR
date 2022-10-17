@@ -22,10 +22,11 @@ defmodule DashboardWeb.PageLive do
       sc_interval: 20000,
       bmc_interval_interval: 50000,
       view: :home,
+      gpu: :gpu1,
     },
 
   }
-
+  @gpus [:gpu1, :gpu2, :gpu3, :gpu4, :gpu5, :gpu6]
 
   @views [:home, :gpu, :cpu, :bmc]
 
@@ -58,7 +59,7 @@ defmodule DashboardWeb.PageLive do
     {:ok, initial_state(assign(socket, :tref, tref))}
   end
 
-  def get_all_sc_info(sc_number) do
+  def get_all_sc_info(sc_number, gpu_num) do
 
     # IO.inspect sc_number
 
@@ -82,7 +83,16 @@ defmodule DashboardWeb.PageLive do
       _ -> get_gpu_charts("GPU-70987dcb-d543-54bc-8ac5-fc3cfc530043", 5)
     end
 
+    sc_gpu_infos = case gpu_num do
+      :gpu1 -> sc_gpu_infos_1
+      :gpu2 -> sc_gpu_infos_2
+
+    end
+
+
     sc_cpu_freq_chart = get_cpu_freq_chart(5)
+
+    server_status = get_all_server_status()
     # sc_status = get_sc_status(1)
 
     # %{last_gpu_temp: last_gpu_temp, sc_gpu_charts: sc_gpu_charts, sc_cpu_freq_chart: sc_cpu_freq_chart}
@@ -91,10 +101,11 @@ defmodule DashboardWeb.PageLive do
       last_info: %{
         last_gpu_temp: sc_gpu_infos_1[:last_gpu_temp],
         last_cpu_freq: sc_cpu_freq_chart[:last_cpu_freq],
-        sc_9_status: "sc_status[:sc_9_status]",
+        server_status: server_status,
         uuid: sc_gpu_infos_1[:uuid],
         sc_gpu_infos_1: sc_gpu_infos_1,
-        sc_gpu_infos_2: sc_gpu_infos_2
+        sc_gpu_infos_2: sc_gpu_infos_2,
+        sc_gpu_infos: sc_gpu_infos
       },
       charts: %{
         gpu_temp_svg: sc_gpu_infos_1[:gpu_temp_svg],
@@ -109,7 +120,7 @@ defmodule DashboardWeb.PageLive do
 
     # All needed infos
     all_infos =  %{
-      sc_info: get_all_sc_info("9"),
+      sc_info: get_all_sc_info("9" , :gpu1),
 
       bmc_info: %{
 
@@ -131,6 +142,11 @@ defmodule DashboardWeb.PageLive do
     |> assign(local_mechine_info: @initial_state[:local_mechine_info])
     |> assign(settings: @initial_state[:settings])
     |> assign(sc_num: "")
+    |> assign(sc9_status: "")
+    |> assign(sc10_status: "")
+    |> assign(bmc_sc9_status: "")
+    |> assign(bmc_sc10_status: "")
+
 
     # ## BMC charts currently not available
     # |> assign(cpu_chart_svg: get_cpu_chart(10))
@@ -180,35 +196,25 @@ defmodule DashboardWeb.PageLive do
     {:noreply, socket}
   end
 
+  def handle_event("choose_gpu_" <> gpu, _, socket) do
+    send self(), :refresh
 
-  def handle_event("add-button", _, socket) do
+    socket =
+      socket
+      |> update(:settings, &(put_in(&1[:gpu], String.to_existing_atom(gpu))))
 
+    {:noreply,socket}
+  end
 
-    # params = %{CPU_FAN: "1000RPM", CPU_OPT: "1300RPM", CPU_ECC: "Presence Detected", Memory_Train_ERR: "N/A", Watchdog2: "N/A"}
+  def handle_event("notify-button", _, socket) do
 
-    ##BMC table multi-thread
-    to_database()
-
-    # changeset = Cpu.changeset(%Cpu{}, list["critical_sensors"])
-    # IO.inspect(changeset)
-
-
-
-    # #cpu_freq table
-    # {_, list} = JSON.decode(get_super_clusters_data)
-
-    # # changeset = CpuFreq.changeset(%CpuFreq{}, list["cpu_freq"])
-    # # IO.inspect(changeset)
-
-    # # Repo.insert(changeset)
+    server_status = get_all_server_status()
 
 
-    time = getTime()
-    {
-    :noreply,
-    assign(
-    socket,
-    time: getTime())}
+    Dashboard.call_discord_bot(server_status[:sc_9_status])
+
+
+    {:noreply,socket}
   end
 
 
@@ -223,9 +229,18 @@ defmodule DashboardWeb.PageLive do
 
   # Refresh method Update methods
   def handle_info(:refresh, socket) do
+    sc_info = get_all_sc_info(socket.assigns.sc_num, socket.assigns.settings.gpu)
+    if sc_info[:last_info][:server_status][:sc_9_status] != socket.assigns.sc9_status do
+      # pid = spawn(
+      #   fn ->
+      #     Dashboard.call_discord_bot("SC9 status update: " <> sc_info[:last_info][:server_status][:sc_9_status])
+      #   end
+      # )
+    end
+    IO.inspect sc_info[:last_info][:server_status][:sc_9_status]
+    IO.inspect socket.assigns.sc9_status
 
-
-    {:noreply, assign(socket, local_mechine_info: update_local_info(), sc_info: get_all_sc_info(socket.assigns.sc_num))} #get_all_sc_info(socket.assigns.sc_num)
+    {:noreply, assign(socket, local_mechine_info: update_local_info(), sc_info: sc_info, sc9_status: sc_info[:last_info][:server_status][:sc_9_status])}
 
   end
 

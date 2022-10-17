@@ -12,6 +12,40 @@ defmodule Dashboard.InfoHandler do
   import Contex
   use Timex
 
+  def get_server_status(type, sc_num, limit \\ 2) do
+    q = from t in ServerStatus,
+        where: t.type == ^type and t.super_cluster_number == ^sc_num,
+        order_by: [desc: t.id],
+        limit: ^limit,
+        select: %{inserted_at: t.inserted_at, type: t.type, sc_num: t.super_cluster_number, status: t.status}
+    Repo.all(q)
+
+
+  end
+
+  def get_all_server_status() do
+    # get last super cluster status in database
+    status_infos = get_server_status("sc", 9, 1)
+    cond do
+      length(status_infos) == 0 -> %{status: "N/A"}
+
+      true ->
+        [status_info] = status_infos
+        {:ok, sc9_last_status} = Map.fetch(status_info, :status)
+
+      # # IO.inspect sc9_last_status
+      # sc9_status = case sc9_last_status do
+      #   "error" ->
+      #     "Offline"
+      #   _ ->
+      #     "Online"
+      # end
+      # IO.inspect sc9_status
+
+      %{sc_9_status: sc9_last_status}
+    end
+  end
+
   def get_cpu_freq(limit \\ 10) do
     q = from f in CpuFreq,
         order_by: [desc: f.id],
@@ -380,13 +414,18 @@ defmodule Dashboard.InfoHandler do
           cpu_freq_sc9 = Map.put(list["CPU"]["sc9"]["cpu_freq"], "sc_num", 9)
           changeset = CpuFreq.changeset(%CpuFreq{}, cpu_freq_sc9)
           Repo.insert(changeset)
+
+          status_info = %{} |> Map.put("type", "sc")
+                            |> Map.put("super_cluster_number", 9)
+                            |> Map.put("status", list["CPU"]["sc9"]["status"])
+          changeset = ServerStatus.changeset(%ServerStatus{}, status_info)
+          Repo.insert(changeset)
         else
-          status_info = %{} |> Map.put("type", "super cluster error")
+          status_info = %{} |> Map.put("type", "sc")
                             |> Map.put("super_cluster_number", 9)
                             |> Map.put("status", list["CPU"]["sc9"]["status"])
           IO.inspect status_info
           changeset = ServerStatus.changeset(%ServerStatus{}, status_info)
-          IO.inspect changeset
           Repo.insert(changeset)
         end
 
@@ -408,6 +447,20 @@ defmodule Dashboard.InfoHandler do
           # CPU Freq table
           cpu_freq_sc10 = Map.put(list["CPU"]["sc10"]["cpu_freq"], "sc_num", 10)
           changeset = CpuFreq.changeset(%CpuFreq{}, cpu_freq_sc10)
+          Repo.insert(changeset)
+
+          status_info = %{} |> Map.put("type", "sc")
+                            |> Map.put("super_cluster_number", 10)
+                            |> Map.put("status", list["CPU"]["sc10"]["status"])
+          changeset = ServerStatus.changeset(%ServerStatus{}, status_info)
+          Repo.insert(changeset)
+        else
+          status_info = %{} |> Map.put("type", "sc")
+                            |> Map.put("super_cluster_number", 10)
+                            |> Map.put("status", list["CPU"]["sc10"]["status"])
+          IO.inspect status_info
+          changeset = ServerStatus.changeset(%ServerStatus{}, status_info)
+          IO.inspect changeset
           Repo.insert(changeset)
         end
 
