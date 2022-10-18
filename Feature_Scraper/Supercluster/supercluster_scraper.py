@@ -61,5 +61,4 @@ def run_supercluster_scraper(username: str, password: str, url_config: str) -> d
 
 
 if __name__ == "__main__":
-    result = run_supercluster_scraper("usyd-10a", "6r7mYcxLHXLq8Rgu", "..\\config.json")
-    print(json.dumps(result, indent=2))
+    print(get_supercluster_result())
