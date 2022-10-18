@@ -35,13 +35,13 @@ def run_supercluster_scraper(username: str, password: str, url_config: str) -> d
                 }
 
             try:
-                ssh.connect(superclusters[sc]["IP"], username=username, password=password)
+                ssh.connect(superclusters[sc]["IP"], username=username, password=password, timeout=3)
 
                 path = "soft3888_tu12_04_re_p39/Feature_Scraper/Supercluster"
                 command = "cd {path}; echo 6r7mYcxLHXLq8Rgu | sudo -S -k python3 supercluster_scraper.py".format(path=path)
-                ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
+                ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command, timeout=3)
 
-                str_result = ssh_stdout.read().decode('utf-8').replace("\'", "\"")
+                str_result = ssh_stdout.read().decode('utf-8').replace("\'", "\"").replace("\n", "")
                 json_result = json.loads(str_result)
                 
                 json_result["GPU"]["status"] = "OK"
