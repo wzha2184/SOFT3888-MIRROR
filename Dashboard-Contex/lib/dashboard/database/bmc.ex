@@ -15,6 +15,7 @@ defmodule Dashboard.Database.Bmc do
     field :bmc_5v_alw, :decimal
     field :bmc_cpu_18v, :decimal
     field :bmc_cpu_18v_s5, :decimal
+    field :bmc_cpu_33v, :decimal
     field :bmc_33v, :decimal
     field :bmc_pch_cldo, :decimal
     field :bmc_vcore, :decimal
@@ -26,7 +27,7 @@ defmodule Dashboard.Database.Bmc do
     field :bmc_lan_temp, :decimal
     field :bmc_soc_fan, :decimal
     field :bmc_vbat, :decimal
-    field :sc_num, :decimal
+    field :sc_num, :string
 
     timestamps()
   end
@@ -34,13 +35,13 @@ defmodule Dashboard.Database.Bmc do
   @doc false
   def changeset(bmc, attrs) do
     bmc
-    |> cast(attrs, [:bmc_12v, :bmc_33v, :bmc_33v_alw, :bmc_5v, :bmc_5v_alw, :bmc_cpu_18v, :bmc_cpu_18v_s5,
+    |> cast(attrs, [:bmc_12v, :bmc_33v, :bmc_33v_alw, :bmc_5v, :bmc_5v_alw, :bmc_cpu_18v, :bmc_cpu_18v_s5, :bmc_cpu_33v,
     :bmc_pch_cldo, :bmc_vcore, :bmc_vddio_abcd, :bmc_vddio_efgh, :bmc_vsoc, :bmc_chipset_fan,
-    :bmc_cpu_temp, :bmc_cpu_ecc, :bmc_cpu_fan, :bmc_cpu_opt, :bmc_lan_temp, :bmc_memory_train_err,
-    :bmc_soc_fan, :bmc_vbat, :bmc_watchdog2, :sc_num])
-    |> validate_required([:bmc_12v, :bmc_33v, :bmc_33v_alw, :bmc_5v, :bmc_5v_alw, :bmc_cpu_18v, :bmc_cpu_18v_s5,
+    :bmc_cpu_temp, :bmc_cpu_ecc, :bmc_cpu_fan, :bmc_lan_temp, :bmc_memory_train_err,
+    :bmc_soc_fan, :bmc_vbat, :bmc_watchdog2, :sc_num]) # bmc_cpu_opt
+    |> validate_required([:bmc_12v, :bmc_33v, :bmc_33v_alw, :bmc_5v, :bmc_5v_alw, :bmc_cpu_18v, :bmc_cpu_18v_s5, :bmc_cpu_33v,
     :bmc_pch_cldo, :bmc_vcore, :bmc_vddio_abcd, :bmc_vddio_efgh, :bmc_vsoc, :bmc_chipset_fan,
-    :bmc_cpu_temp, :bmc_cpu_ecc, :bmc_cpu_fan, :bmc_cpu_opt, :bmc_lan_temp, :bmc_memory_train_err,
+    :bmc_cpu_temp, :bmc_cpu_ecc, :bmc_cpu_fan, :bmc_lan_temp, :bmc_memory_train_err,
     :bmc_soc_fan, :bmc_vbat, :bmc_watchdog2, :sc_num])
 
     # |> cast(attrs, [:bmc_12v, :bmc_33v, :bmc_33v_alw, :bmc_5v, :bmc_5v_alw, :bmc_cpu_18v, :bmc_cpu_18v_s5,

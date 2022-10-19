@@ -4,7 +4,7 @@ defmodule Dashboard.Database.ServerStatus do
 
   schema "server_status" do
     field :type, :string
-    field :super_cluster_number, :decimal
+    field :sc_num, :string
     field :status, :string
 
     timestamps()
@@ -13,8 +13,8 @@ defmodule Dashboard.Database.ServerStatus do
   @doc false
   def changeset(sc_status, attrs) do
     sc_status
-    |> cast(attrs, [:type, :super_cluster_number, :status])
-    |> validate_required([:type, :super_cluster_number, :status])
+    |> cast(attrs, [:type, :sc_num, :status])
+    |> validate_required([:type, :sc_num, :status])
 
   end
 end

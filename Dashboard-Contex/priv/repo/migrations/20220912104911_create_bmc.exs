@@ -27,7 +27,7 @@ defmodule Dashboard.Repo.Migrations.CreateBmc do
       add :bmc_lan_temp, :decimal
       add :bmc_soc_fan, :decimal
       add :bmc_vbat, :decimal
-      add :sc_num, :decimal
+      add :sc_num, :string
 
       # timestamps(autogenerate: {MyThing, :local_time, []})
       timestamps()

@@ -21,7 +21,8 @@ defmodule Dashboard.Database.Gpu do
     field :power, :decimal
     field :totalMemory, :decimal
     field :usedMemory, :decimal
-    field :sc_num, :decimal
+    field :sc_num, :string
+    field :gpu_id, :string
 
     timestamps()
   end
@@ -31,10 +32,10 @@ defmodule Dashboard.Database.Gpu do
     gpu
     |> cast(attrs, [:BIOS,:MaxStreamingMultiprocessorFrequency, :MaxgraphicsFrequency, :MaxmemoryFrequency, :Name,
     :StreamingMultiprocessorFrequency, :Temperature, :UUID, :fanSpeed, :freeMemory, :graphicsFrequency, :limitPower,
-    :maxLimitPower, :memoryFrequency, :minLimitPower, :power, :totalMemory, :usedMemory, :sc_num])
+    :maxLimitPower, :memoryFrequency, :minLimitPower, :power, :totalMemory, :usedMemory, :sc_num, :gpu_id])
     |> validate_required([:BIOS,:MaxStreamingMultiprocessorFrequency, :MaxgraphicsFrequency, :MaxmemoryFrequency, :Name,
     :StreamingMultiprocessorFrequency, :Temperature, :UUID, :fanSpeed, :freeMemory, :graphicsFrequency, :limitPower,
-    :maxLimitPower, :memoryFrequency, :minLimitPower, :power, :totalMemory, :usedMemory, :sc_num])
+    :maxLimitPower, :memoryFrequency, :minLimitPower, :power, :totalMemory, :usedMemory, :sc_num, :gpu_id])
 
   end
 end

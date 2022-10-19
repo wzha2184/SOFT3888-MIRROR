@@ -21,7 +21,8 @@ defmodule Dashboard.Repo.Migrations.CreateGpu do
       add :power, :decimal
       add :totalMemory, :decimal
       add :usedMemory, :decimal
-      add :sc_num, :decimal
+      add :sc_num, :string
+      add :gpu_id, :string
 
       # timestamps(autogenerate: {MyThing, :local_time, []})
       timestamps()

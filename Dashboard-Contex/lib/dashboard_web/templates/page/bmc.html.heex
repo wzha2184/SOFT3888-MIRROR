@@ -1,24 +1,11 @@
 
       <header class="content-head">
-        <h1>Super Cluster <%= @sc_info[:current_sc_number] %> GPU INFORMATION</h1>
+        <h1>Super Cluster <%= @sc_info[:current_sc_number] %> BMC INFORMATION</h1>
 
         <div class="action">
           <%# <button phx-click="add-button">
             Click Me!
           </button> %>
-        </div>
-        <div class="dropdown">
-          <a> Current Inforamtion  </a>
-          <button class="dropbtn"> GPU <%= @settings[:gpu_id] %></button>
-          <div class="dropdown-content">
-            <%= if @sc_gpu_count[@sc_num]>0 do %>
-              <%= for s <- 1..@sc_gpu_count[@sc_num] do %>
-                <a href="#" phx-click={"choose_gpu_#{s}"}>
-                  GPU <%= s %>
-                </a>            
-              <% end %>
-            <% end %>
-          </div>
         </div>
       </header>
 
@@ -34,8 +21,8 @@
           </div>
 
             <div class="box-content">
-              <span class="small"><%= @sc_info[:last_info][:sc_gpu_infos][:uuid] %>  </span>
-              GPU UUID
+              <span class="small"><%= @bmc_info[:last_info][:bmc_infos][:bmc_cpu_fan] %>  </span>
+              CPU Fan
             </div>
           </div>
 
@@ -45,8 +32,8 @@
             </div>
 
             <div class="box-content">
-              <span class="big"><%=@sc_info[:last_info][:sc_gpu_infos][:last_used_memory] %> </span>
-              Used Memory
+              <span class="big"><%=@bmc_info[:last_info][:bmc_infos][:bmc_33v] %> </span>
+              +3.3V
             </div>
           </div>
 
@@ -58,8 +45,8 @@
             </div>
 
             <div class="box-content">
-              <span class="big"><%=@sc_info[:last_info][:sc_gpu_infos][:last_power] %> W </span>
-              Power
+              <span class="big"><%=@bmc_info[:last_info][:bmc_infos][:bmc_5v] %>  </span>
+              +5V
             </div>
           </div>
 
@@ -71,8 +58,8 @@
             </div>
 
             <div class="box-content">
-              <span class="big"><%=@sc_info[:last_info][:sc_gpu_infos][:last_limit_power] %> W </span>
-              Limit Power
+              <span class="big"><%=@bmc_info[:last_info][:bmc_infos][:bmc_pch_cldo] %> </span>
+              +PCH CLDO
             </div>
           </div>
 
@@ -84,8 +71,8 @@
             </div>
 
             <div class="box-content">
-              <span class="big"><%=@sc_info[:last_info][:sc_gpu_infos][:last_streaming_multiprocessor_frequency] %> </span>
-              Streaming Multiprocessor Frequency
+              <span class="big"><%=@bmc_info[:last_info][:bmc_infos][:bmc_chipset_fan] %>  </span>
+              CHIPSET FAN
             </div>
           </div>
 
@@ -98,8 +85,22 @@
             </div>
 
             <div class="box-content">
-              <span class="big"><%= @sc_info[:last_info][:sc_gpu_infos][:last_gpu_temp] %> °c</span>
-              Current GPU Temperature
+              <span class="big"><%= @bmc_info[:last_info][:bmc_infos][:bmc_cpu_temp] %> °c</span>
+              CPU Temperature
+            </div>
+          </div>
+
+          <div class="info-box active">
+            <div class="box-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-thermometer-half" viewBox="0 0 16 16">
+              <path d="M9.5 12.5a1.5 1.5 0 1 1-2-1.415V6.5a.5.5 0 0 1 1 0v4.585a1.5 1.5 0 0 1 1 1.415z"/>
+              <path d="M5.5 2.5a2.5 2.5 0 0 1 5 0v7.55a3.5 3.5 0 1 1-5 0V2.5zM8 1a1.5 1.5 0 0 0-1.5 1.5v7.987l-.167.15a2.5 2.5 0 1 0 3.333 0l-.166-.15V2.5A1.5 1.5 0 0 0 8 1z"/>
+            </svg>
+            </div>
+
+            <div class="box-content">
+              <span class="big"><%= @bmc_info[:last_info][:bmc_infos][:bmc_vbat] %> </span>
+              VBAT
             </div>
           </div>
         </section>
@@ -109,42 +110,29 @@
           <div class="chart-box">
             <div class="chart">
             <%= #@bmc_cpu_temp_svg %>
-            <%= @sc_info[:last_info][:sc_gpu_infos][:gpu_temp_svg] %>
+            <%= @bmc_info[:last_info][:bmc_infos][:cpu_temp_chart] %>
             </div>
           </div>
 
           <div class="chart-box">
             <div class="chart">
             <%= #@bmc_lan_temp_svg %>
-            <%= @sc_info[:last_info][:sc_gpu_infos][:gpu_graphics_frequency_chart] %>
+            <%= @bmc_info[:last_info][:bmc_infos][:vcore_chart] %>
             </div>
           </div>
 
           <div class="chart-box">
             <div class="chart">
-            <%= @sc_info[:last_info][:sc_gpu_infos][:gpu_memory_frequency_chart] %>
+            <%= #@bmc_cpu_temp_svg %>
+            <%= @bmc_info[:last_info][:bmc_infos][:bmc_12v_chart] %>
             </div>
           </div>
 
           <div class="chart-box">
             <div class="chart">
-            <%= @sc_info[:last_info][:sc_gpu_infos][:gpu_fan_speed_chart] %>
+            <%= #@bmc_lan_temp_svg %>
+            <%= @bmc_info[:last_info][:bmc_infos][:cpu_fan_chart] %>
             </div>
-          </div>
-
-          <div class="chart-box">
-            <div class="chart">
-            <%= #@cpu_chart_svg %>
-            <%= @sc_info[:last_info][:sc_gpu_infos][:gpu_free_mem_svg] %>
-            </div>
-
-          </div>
-
-          <div class="chart-box">
-            <div class="chart">
-            <%= @sc_info[:last_info][:sc_gpu_infos][:gpu_power_svg] %>
-            </div>
-
           </div>
 
         </section>

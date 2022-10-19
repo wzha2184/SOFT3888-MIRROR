@@ -28,6 +28,14 @@ defmodule Dashboard do
     call_python(:alertBOT, :run, [info])
   end
 
+
+  def get_json(filename) do
+    with {:ok, body} <- File.read(filename),
+          {:ok, json} <- JSON.decode(body), do: {:ok, json}
+  end
+
+
+
   defp default_instance() do
     #Load all modules in our priv/python directory
     path = [:code.priv_dir(:dashboard), "python"]
