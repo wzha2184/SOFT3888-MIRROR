@@ -3,7 +3,7 @@ import random
 from discord.ext import tasks
 #change flowing two attributes
 channel_ID = 1028168592124026882
-token = 'MTAyODE2NzY5MDA3MTgzODcyMA.G2_bMN.T9H_gZt3oUwfGKuCtIedDudXUPd0rfmNHrS5MM'
+token = 'MTAyODE2NzY5MDA3MTgzODcyMA.GlsZYf.qVyYSFvUplPSTVOldV3qDPq3jbjJJKCEvE0kho'
 
 text = ""
 def run(report):
@@ -22,4 +22,4 @@ def run(report):
   global token
   client.run(token)
 
-#run("Report") will send "Report"
+run("Report") will send "Report"
