@@ -22,4 +22,4 @@ def run(report):
   global token
   client.run(token)
 
-run("Report") will send "Report"
+#run("Report") will send "Report"
