@@ -50,5 +50,5 @@ assert result[board2]['power'][-3:].isdigit()
 print("Check power of the 2 GPU boards -- OK")
 
 assert result[board1]['fanSpeed'].isdigit()
-assert result[board1]['fanSpeed'].isdigit()
+assert result[board2]['fanSpeed'].isdigit()
 print("Check fanSpeed of the 2 GPU boards -- OK")
