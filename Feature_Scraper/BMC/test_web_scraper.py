@@ -103,6 +103,6 @@ if result['BMC']['sc10']['status'] == 'OK':
     assert result['BMC']['sc10']['+VBAT'][2:].isdigit()
     print("Check sc10 BMC +VBAT -- OK")
 
-    power_control_options = ['Hard Reset']
+    power_control_options = ['Hard Reset', "Power Off", "Power On", "Power Cycle", "ACPI Shutdown"]
     assert result['BMC']['sc10']['power_control'] in power_control_options
     print("Check sc10 BMC power_control' -- OK")
