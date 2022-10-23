@@ -17,25 +17,14 @@ defmodule DashboardWeb.PageLive do
     },
 
   }
-  @gpus [:gpu1, :gpu2, :gpu3, :gpu4, :gpu5, :gpu6]
+  # @gpus [:gpu1, :gpu2, :gpu3, :gpu4, :gpu5, :gpu6]
 
-  @views [:home, :gpu, :cpu, :bmc]
+  @views [:home, :gpu, :cpu, :bmc, :log]
 
   def render(view, assigns) when view in @views do
     Phoenix.View.render(DashboardWeb.PageView, "#{view}.html", assigns)
   end
 
-  # def update_settings() do
-  #   %{
-  #     local_refresh_interval: 2000,
-  #     sc_interval: 20000,
-  #     bmc_interval_interval: 50000,
-  #     view: :home,
-  #     gpu_id: "1",
-  #     sc_list: get_sc_config_list(),
-  #     sc_gpu_count: %{},
-  #   }
-  # end
 
 
   def render(assigns) do
@@ -55,8 +44,6 @@ defmodule DashboardWeb.PageLive do
       schedule_run_sc_script(@initial_state[:settings][:sc_interval], %{tref: nil})
       schedule_run_bmc_script(@initial_state[:settings][:bmc_interval_interval], %{tref: nil})
 
-      ## Use Javascript to make live chart
-      # :timer.send_interval(10000, self(), :update_chart)
     end
 
     :erlang.system_flag(:scheduler_wall_time, true)
@@ -69,28 +56,17 @@ defmodule DashboardWeb.PageLive do
 
     sc_cpu_freq_infos = get_cpu_freq_infos(sc_number, 5)
 
-    server_status = get_all_server_status()
+    # server_status = get_all_server_status("sc", sc_list)
     # sc_status = get_sc_status(1)
 
     # %{last_gpu_temp: last_gpu_temp, sc_gpu_charts: sc_gpu_charts, sc_cpu_freq_chart: sc_cpu_freq_chart}
     %{
       current_sc_number: sc_number,
       last_info: %{
-        # last_gpu_temp: sc_gpu_infos_1[:last_gpu_temp],
-        # last_cpu_freq: sc_cpu_freq_chart[:last_cpu_freq],
-        server_status: server_status,
-        # uuid: sc_gpu_infos_1[:uuid],
-        # sc_gpu_infos_1: sc_gpu_infos_1,
-        # sc_gpu_infos_2: sc_gpu_infos_2,
+
         sc_gpu_infos: sc_gpu_infos,
         sc_cpu_freq_infos: sc_cpu_freq_infos
       },
-      # charts: %{
-      #   # gpu_temp_svg: sc_gpu_infos_1[:gpu_temp_svg],
-      #   # gpu_free_mem_svg: sc_gpu_infos_1[:gpu_free_mem_svg],
-      #   # gpu_power_svg: sc_gpu_infos_1[:gpu_power_svg],
-      #   # cpu_freq_svg: sc_cpu_freq_chart[:cpu_freq_chart],
-      # }
     }
   end
 
@@ -121,8 +97,8 @@ defmodule DashboardWeb.PageLive do
     local_mechine_info =  %{
       time: getTime(),
       uptime: uptime(),
-      available_core: available_core(),
-      available_mem: get_memory(),
+      # available_core: available_core(),
+      # available_mem: get_memory(),
     }
 
     sc_list = get_sc_config_list()
@@ -141,9 +117,9 @@ defmodule DashboardWeb.PageLive do
     all_infos =  %{
       sc_info: get_all_sc_info("" , ""),
 
-      bmc_info: get_all_bmc_info("")
+      bmc_info: get_all_bmc_info(""),
 
-
+      bmc_log: get_bmc_info("", 30)
     }
 
 
@@ -151,15 +127,14 @@ defmodule DashboardWeb.PageLive do
     |> assign(local_mechine_info: local_mechine_info)
     |> assign(settings: settings)
     |> assign(sc_num: "")
-    |> assign(sc9_status: "")
-    |> assign(sc10_status: "")
-    |> assign(bmc_sc9_status: "")
-    |> assign(bmc_sc10_status: "")
+    |> assign(sc_status: get_all_server_status("sc", sc_list))
+    |> assign(bmc_status: get_all_server_status("bmc", sc_list))
     |> assign(sc_gpu_count: update_gpu_count(sc_list))
     # |> assign(sc_gpu_count: %{"sc10" => 6, "sc9" => 6})
 
     |> assign(sc_info: all_infos[:sc_info])
     |> assign(bmc_info: all_infos[:bmc_info])
+    |> assign(bmc_log: all_infos[:bmc_log])
 
 
 
@@ -217,8 +192,9 @@ defmodule DashboardWeb.PageLive do
     # sc_list = get_sc_config_list()
     # {_, list} = JSON.decode(Dashboard.get_super_clusters_data())
     # Enum.each(sc_list, fn(s) -> sc_store_to_db(list, s) end)
-    call_sc_script()
+    # call_sc_script()
 
+    IO.inspect get_all_server_status("sc", socket.assigns.settings.sc_list)
     {:noreply,socket}
   end
 
@@ -226,8 +202,8 @@ defmodule DashboardWeb.PageLive do
     %{
       time: getTime(),
       uptime: uptime(),
-      available_core: available_core(),
-      available_mem: get_memory()
+      # available_core: available_core(),
+      # available_mem: get_memory()
     }
   end
 
@@ -235,22 +211,25 @@ defmodule DashboardWeb.PageLive do
   def handle_info(:refresh, socket) do
     sc_info = get_all_sc_info(socket.assigns.sc_num, socket.assigns.settings.gpu_id)
     bmc_info = get_all_bmc_info(socket.assigns.sc_num)
-    if sc_info[:last_info][:server_status][:sc_9_status] != socket.assigns.sc9_status do
-      # pid = spawn(
-      #   fn ->
-      #     Dashboard.call_discord_bot("SC9 status update: " <> sc_info[:last_info][:server_status][:sc_9_status])
-      #   end
-      # )
-    end
-    # IO.inspect sc_info[:last_info][:server_status][:sc_9_status]
-    # IO.inspect socket.assigns.sc9_status
+    bmc_log = get_bmc_info(socket.assigns.sc_num, 30)
 
     {:noreply, assign(socket, local_mechine_info: update_local_info(),
-    sc_info: sc_info, sc9_status: sc_info[:last_info][:server_status][:sc_9_status], bmc_info: bmc_info
+    sc_info: sc_info, bmc_info: bmc_info, bmc_log: bmc_log
     )}
 
   end
 
+  def call_discord_bot(type, sc_num, status_info) do
+      _pid = spawn(
+        fn ->
+          Dashboard.call_discord_bot("#{type} Status Updated: \n" <>
+          "Name: #{String.upcase(sc_num)} \n" <>
+          "New Status: #{status_info} \n" <>
+          "Time: #{getTime()}")
+          # Dashboard.call_discord_bot("hello")
+        end
+      )
+  end
 
 
   # Run python sc script and store in database methods
@@ -259,7 +238,19 @@ defmodule DashboardWeb.PageLive do
     # run super cluster script
     call_sc_script()
 
-    {:noreply, assign(socket, sc_gpu_count: update_gpu_count(socket.assigns.settings.sc_list))}
+    sc_status = get_all_server_status("sc", socket.assigns.settings.sc_list)
+
+    # IO.inspect sc_status
+    for sc_name <- socket.assigns.settings.sc_list do
+      [sc_update, sc_info] = String.split(sc_status[sc_name], "_", parts: 2)
+
+      # sc
+      if sc_update == "true" do
+        call_discord_bot("Super Cluster", sc_name, sc_info)
+      end
+    end
+
+    {:noreply, assign(socket, sc_gpu_count: update_gpu_count(socket.assigns.settings.sc_list), sc_status: sc_status)}
   end
 
   # Run python bmc script and store in database methods
@@ -268,24 +259,22 @@ defmodule DashboardWeb.PageLive do
     # run bmc script
     call_bmc_script()
 
-    {:noreply, socket}
+    bmc_status = get_all_server_status("bmc", socket.assigns.settings.sc_list)
+
+    # IO.inspect bmc_status
+    for sc_name <- socket.assigns.settings.sc_list do
+      [bmc_update, bmc_info] = String.split(bmc_status[sc_name], "_", parts: 2)
+
+      # bmc
+      if bmc_update == "true" do
+        call_discord_bot("BMC", sc_name, bmc_info)
+      end
+
+    end
+
+    {:noreply, assign(socket, bmc_status: bmc_status)}
   end
 
-  ## This is JavaScript chart handle refresh event
-  # def handle_info(:update_chart, socket) do
-  #   # # Generate dummy data and trigger "new-point" event
-  #   # {:noreply,
-  #   #  Enum.reduce(1..5, socket, fn i, acc ->
-  #   #    push_event(
-  #   #      acc,
-  #   #      "new-point",
-  #   #      %{label: "User #{i}", value: Enum.random(50..150) + i * 10}
-  #   #    )
-  #   #  end)}
-
-  #    {:noreply,
-  #    push_event(socket, "new-point", %{label: "Memory Usage", value: Enum.random(700..2200)})}
-  # end
 
 
 

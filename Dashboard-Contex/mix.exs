@@ -53,8 +53,6 @@ defmodule Dashboard.MixProject do
       {:json, "~> 1.4"},
       {:contex, "~> 0.4.0"},
       {:timex, "~> 3.7"},
-      # {:calendar, "~> 1.0.0"},
-      # {:tzdata, "~> 1.1"},
     ]
   end
 

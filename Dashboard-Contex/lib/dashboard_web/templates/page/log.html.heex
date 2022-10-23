@@ -1,0 +1,69 @@
+
+      <header class="content-head">
+        <h1>Super Cluster <%= @sc_info[:current_sc_number] %> Logging </h1>
+
+        <div class="action">
+          <%# <button phx-click="add-button">
+            Click Me!
+          </button> %>
+        </div>
+      </header>
+
+      <div class="content">
+
+
+        <section>
+          <h2>BMC: CPU 3.3V</h2>
+
+          <table>
+            <tr>
+              <th>Value</th>
+              <th>Time</th>
+            </tr>
+            <%= for s <- @bmc_log do %>
+            <tr>
+              <td><%= s[:bmc_33v] %></td>
+              <td><%= s[:inserted_at] %></td>
+            </tr>
+            <% end %>
+          </table>
+        </section>
+
+        <section>
+          <h2>BMC: CPU 5V</h2>
+
+          <table>
+            <tr>
+              <th>Value</th>
+              <th>Time</th>
+            </tr>
+            <%= for s <- @bmc_log do %>
+            <tr>
+              <td><%= s[:bmc_5v] %></td>
+              <td><%= s[:inserted_at] %></td>
+            </tr>
+            <% end %>           
+
+          </table>
+        </section>
+
+        <section>
+          <h2>BMC: CPU 12V</h2>
+
+          <table>
+            <tr>
+              <th>Value</th>
+              <th>Time</th>
+            </tr>
+            <%= for s <- @bmc_log do %>
+            <tr>
+              <td><%= s[:bmc_12v] %></td>
+              <td><%= s[:inserted_at] %></td>
+            </tr>
+            <% end %>           
+
+          </table>
+        </section>
+
+      </div>
+

@@ -13,7 +13,7 @@ defmodule Dashboard.InfoHandler do
 
   def get_server_status(type, sc_num, limit \\ 2) do
     q = from t in ServerStatus,
-        where: t.type == ^type and t.'sc_num' == ^sc_num,
+        where: t.type == ^type and t.sc_num == ^sc_num,
         order_by: [desc: t.id],
         limit: ^limit,
         select: %{inserted_at: t.inserted_at, type: t.type, sc_num: t.sc_num, status: t.status}
@@ -22,61 +22,37 @@ defmodule Dashboard.InfoHandler do
 
   end
 
-  def get_all_server_status() do
-    # get last super cluster status in database
-    status_infos = get_server_status("sc", "9", 1)
-    cond do
-      length(status_infos) == 0 -> %{status: "N/A"}
+  def get_all_server_status(type, sc_list) do
+    Enum.reduce sc_list, %{}, fn sc_name, acc ->
+      server_info = get_server_status(type, sc_name, 2)
 
-      true ->
-        [status_info] = status_infos
-        {:ok, sc9_last_status} = Map.fetch(status_info, :status)
+      if_update = cond do
+        length(server_info) == 0 ->
+          "false_" <> "N/A"
+        length(server_info) == 1 ->
+          [info] = server_info
+          {:ok, status} = Map.fetch(info, :status)
+          "true_" <> status
 
-      # # IO.inspect sc9_last_status
-      # sc9_status = case sc9_last_status do
-      #   "error" ->
-      #     "Offline"
-      #   _ ->
-      #     "Online"
-      # end
-      # IO.inspect sc9_status
+        true ->
+        # latest information
+        [info1, info2] = server_info
+        # info1 == info2
+        {:ok, status} = Map.fetch(info1, :status)
+        {:ok, status_2} = Map.fetch(info2, :status)
 
-      %{sc_9_status: sc9_last_status}
-    end
-  end
+        to_string(status != status_2) <> "_" <> status
 
-  def get_sc_status(limit \\ 1) do
-    q = from t in Sc_status,
-        order_by: [desc: t.id],
-        limit: ^limit,
-        select: %{inserted_at: t.inserted_at, status: t.status, info: t.info}
-
-    status_infos = Repo.all(q)
-
-    cond do
-      length(status_infos) == 0 -> %{status: "N/A"}
-
-      true ->
-        [status_info] = status_infos
-        {:ok, sc9_last_status} = Map.fetch(status_info, :status)
-
-      # IO.inspect sc9_last_status
-      sc9_status = case sc9_last_status do
-        "error" ->
-          "Offline"
-        _ ->
-          "Online"
       end
+      Map.put(acc, sc_name, if_update)
 
-      IO.inspect sc9_status
-      %{sc_9_status: sc9_status}
     end
-  end
 
+  end
 
   def get_gpu_info(sc_num, gpu_id, limit \\ 10) do
     q = from t in Gpu,
-        where: t.'gpu_id' == ^gpu_id and t.sc_num == ^sc_num,
+        where: t.gpu_id == ^gpu_id and t.sc_num == ^sc_num,
         order_by: [desc: t.id],
         limit: ^limit,
         select: %{inserted_at: t.inserted_at, Temperature: t.'Temperature', totalMemory: t.totalMemory, freeMemory: t.freeMemory, power: t.power, uuid: t.'UUID', usedMemory: t.usedMemory, limitPower: t.limitPower, graphicsFrequency: t.graphicsFrequency, memoryFrequency: t.memoryFrequency, StreamingMultiprocessorFrequency: t.'StreamingMultiprocessorFrequency', fanSpeed: t.fanSpeed}
@@ -232,7 +208,7 @@ defmodule Dashboard.InfoHandler do
 
   def get_cpu_freq(sc_num, limit \\ 10) do
     q = from t in CpuFreq,
-        where: t.'sc_num' == ^sc_num,
+        where: t.sc_num == ^sc_num,
         order_by: [desc: t.id],
         limit: ^limit,
         select: %{inserted_at: t.inserted_at, cpu_current_freq: t.cpu_current_freq, cpu_max_freq: t.cpu_max_freq, cpu_min_freq: t.cpu_min_freq, gpu_count: t.gpu_count}
@@ -296,7 +272,7 @@ defmodule Dashboard.InfoHandler do
 
   def get_bmc_info(sc_num, limit \\ 10) do
     q = from t in Bmc,
-        where: t.'sc_num' == ^sc_num,
+        where: t.sc_num == ^sc_num,
         order_by: [desc: t.id],
         limit: ^limit,
         select: %{inserted_at: t.inserted_at, bmc_cpu_fan: t.bmc_cpu_fan,
@@ -328,6 +304,7 @@ defmodule Dashboard.InfoHandler do
       {:ok, bmc_chipset_fan} = Map.fetch(last_info, :bmc_chipset_fan)
       {:ok, bmc_cpu_temp} = Map.fetch(last_info, :bmc_cpu_temp)
       {:ok, bmc_vbat} = Map.fetch(last_info, :bmc_vbat)
+      {:ok, time} = Map.fetch(last_info, :inserted_at)
 
 
       plot_options = %{
@@ -428,37 +405,15 @@ defmodule Dashboard.InfoHandler do
       %{bmc_cpu_fan: bmc_cpu_fan, bmc_12v: bmc_12v, bmc_33v: bmc_33v,
       bmc_5v: bmc_5v, bmc_cpu_18v: bmc_cpu_18v, bmc_cpu_33v: bmc_cpu_33v, bmc_pch_cldo: bmc_pch_cldo,
       bmc_vcore: bmc_vcore, bmc_chipset_fan: bmc_chipset_fan, bmc_cpu_temp: bmc_cpu_temp, bmc_vbat: bmc_vbat,
-      cpu_temp_chart: cpu_temp_chart, vcore_chart: vcore_chart, bmc_12v_chart: bmc_12v_chart, cpu_fan_chart: cpu_fan_chart}
+      cpu_temp_chart: cpu_temp_chart, vcore_chart: vcore_chart, bmc_12v_chart: bmc_12v_chart, cpu_fan_chart: cpu_fan_chart, time: time}
     end
   end
 
-  def to_database(sc_list) do
-    IO.inspect("run sc script")
-    # multi-thread
-    pid = spawn(
-      fn ->
-
-        {_, list} = JSON.decode(Dashboard.get_super_clusters_data())
-
-        # IO.inspect list
-        # # sc_status table
-        # changeset = Sc_status.changeset(%Sc_status{}, list["sc_status"])
-        # Repo.insert(changeset)
-
-        # # BMC table
-        # changeset = Bmc.changeset(%Bmc{}, list["BMC"]["BMC1"])
-        # Repo.insert(changeset)
-
-        # Enum.each(sc_list, fn(s) -> IO.puts(s) end)
-
-
-      end)
-  end
 
   def call_sc_script() do
     IO.inspect("run sc script")
     # multi-thread
-    pid = spawn(
+    _pid = spawn(
       fn ->
         {_, list} = JSON.decode(Dashboard.get_super_clusters_data())
         sc_list = get_sc_config_list()
@@ -513,7 +468,7 @@ defmodule Dashboard.InfoHandler do
   def call_bmc_script() do
     IO.inspect("run bmc script")
     # multi-thread
-    pid = spawn(
+    _pid = spawn(
       fn ->
         {_, list} = JSON.decode(Dashboard.get_bmc_data())
         sc_list = get_sc_config_list()
@@ -552,9 +507,14 @@ defmodule Dashboard.InfoHandler do
 
 
   def getTime() do
-    Timex.now() |> Timex.format!("{0M}-{0D} {h24}:{0m}:{s}") |> to_string
+    Timex.now("Australia/Sydney") |> Timex.format!("{0M}-{0D} {h24}:{0m}:{s}") |> to_string
 
     # DateTime.utc_now |> to_string
+  end
+
+  def convert_time(datetime) do
+    timezone = Timezone.get("Australia/Sydney", Timex.now())
+    Timezone.convert(datetime, timezone)
   end
 
   def uptime() do
@@ -562,14 +522,14 @@ defmodule Dashboard.InfoHandler do
     uptime
   end
 
-  def available_core() do
-    :erlang.system_info(:logical_processors_online)
+  # def available_core() do
+  #   :erlang.system_info(:logical_processors_online)
 
-  end
+  # end
 
-  def get_memory() do
-    :erlang.memory(:total)
-  end
+  # def get_memory() do
+  #   :erlang.memory(:total)
+  # end
 
   def get_sc_config_list() do
     {:ok, config_body} = Dashboard.get_json("config.json")
@@ -577,70 +537,6 @@ defmodule Dashboard.InfoHandler do
     Map.keys(config_body["superclusters"])
   end
 
-  def get_sc_gpu_count(sc_list) do
-    # pid = spawn(
-    #   fn ->
-    #     {_, list} = JSON.decode(Dashboard.get_super_clusters_data())
-
-    #     # sc_gpu_count = %{}
-    #     # for sc_name <- sc_list do
-    #     #   sc_gpu_count = if list["GPU"][sc_name]["status"] == "OK" do
-    #     #     gpu_num = list["GPU"][sc_name]["GPU_count"]
-    #     #     sc_gpu_count = Map.put(sc_gpu_count, sc_name, gpu_num)
-    #     #     IO.inspect sc_gpu_count
-    #     #   end
-    #     # end
-
-    #     sc_gpu_count = Enum.reduce sc_list, %{}, fn sc_name, acc ->
-    #       if list["GPU"][sc_name]["status"] == "OK" do
-    #         gpu_num = list["GPU"][sc_name]["GPU_count"]
-    #         Map.put(acc, sc_name, gpu_num)
-    #       else
-    #         Map.put(acc, sc_name, 0)
-    #       end
-    #     end
-
-    #     IO.inspect sc_gpu_count
-    #     sc_gpu_count
-
-    #   end)
-
-
-    # # update
-    # {_, list} = JSON.decode(Dashboard.get_super_clusters_data())
-
-    # # sc_gpu_count = %{}
-    # # for sc_name <- sc_list do
-    # #   sc_gpu_count = if list["GPU"][sc_name]["status"] == "OK" do
-    # #     gpu_num = list["GPU"][sc_name]["GPU_count"]
-    # #     sc_gpu_count = Map.put(sc_gpu_count, sc_name, gpu_num)
-    # #     IO.inspect sc_gpu_count
-    # #   end
-    # # end
-
-    # sc_gpu_count = Enum.reduce sc_list, %{}, fn sc_name, acc ->
-    #   if list["GPU"][sc_name]["status"] == "OK" do
-    #     gpu_num = list["GPU"][sc_name]["GPU_count"]
-    #     Map.put(acc, sc_name, gpu_num)
-    #   else
-    #     Map.put(acc, sc_name, 0)
-    #   end
-    # end
-
-    # IO.inspect sc_gpu_count
-    # sc_gpu_count
-
-    # update
-
-
-    sc_gpu_count = Enum.reduce sc_list, %{}, fn sc_name, acc ->
-      Map.put(acc, sc_name, 6)
-    end
-
-    # IO.inspect sc_gpu_count
-    sc_gpu_count
-
-  end
 
   def update_gpu_count(sc_list) do
 
@@ -655,7 +551,7 @@ defmodule Dashboard.InfoHandler do
         {:ok, gpu_count} = Map.fetch(last_info, :gpu_count)
         gpu_count
 
-        end
+      end
       Map.put(acc, sc_name, gpu_num)
 
     end
