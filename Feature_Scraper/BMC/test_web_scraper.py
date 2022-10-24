@@ -21,42 +21,42 @@ if result['BMC']['sc10']['status'] == 'OK':
     print("Check sc10 BMC CPU_FAN -- OK")
     
     assert len(result['BMC']['sc10']['+12V']) == 6
-    assert result['BMC']['sc10']['+12V'][:3] == '12.'
+    assert result['BMC']['sc10']['+12V'][:3] == '12.' or result['BMC']['sc10']['+12V'][:3] == '11.'
     assert result['BMC']['sc10']['+12V'][3:].isdigit()
     print("Check sc10 BMC +12V -- OK")
 
     assert len(result['BMC']['sc10']['+3.3V']) == 5
-    assert result['BMC']['sc10']['+3.3V'][:2] == '3.'
+    assert result['BMC']['sc10']['+3.3V'][:2] == '3.' or result['BMC']['sc10']['+3.3V'][:2] == '2.'
     assert result['BMC']['sc10']['+3.3V'][2:].isdigit()
     print("Check sc10 BMC +3.3V -- OK")
 
     assert len(result['BMC']['sc10']['+3.3V_ALW']) == 5
-    assert result['BMC']['sc10']['+3.3V_ALW'][:2] == '3.'
+    assert result['BMC']['sc10']['+3.3V_ALW'][:2] == '3.' or result['BMC']['sc10']['+3.3V_ALW'][:2] == '2.'
     assert result['BMC']['sc10']['+3.3V_ALW'][2:].isdigit()
     print("Check sc10 BMC +3.3V_ALW -- OK")
 
     assert len(result['BMC']['sc10']['+5V']) == 5
-    assert result['BMC']['sc10']['+5V'][:2] == '5.'
+    assert result['BMC']['sc10']['+5V'][:2] == '5.' or result['BMC']['sc10']['+5V'][:2] == '4.'
     assert result['BMC']['sc10']['+5V'][2:].isdigit()
     print("Check sc10 BMC +5V -- OK")
 
     assert len(result['BMC']['sc10']['+5V_ALW']) == 5
-    assert result['BMC']['sc10']['+5V_ALW'][:2] == '5.'
+    assert result['BMC']['sc10']['+5V_ALW'][:2] == '5.' or result['BMC']['sc10']['+5V_ALW'][:2] == '4.'
     assert result['BMC']['sc10']['+5V_ALW'][2:].isdigit()
     print("Check sc10 BMC +5V_ALW -- OK")
 
     assert len(result['BMC']['sc10']['+CPU_1.8V']) == 5
-    assert result['BMC']['sc10']['+CPU_1.8V'][:2] == '1.'
+    assert result['BMC']['sc10']['+CPU_1.8V'][:2] == '1.' or result['BMC']['sc10']['+CPU_1.8V'][:2] == '2.'
     assert result['BMC']['sc10']['+CPU_1.8V'][2:].isdigit()
     print("Check sc10 BMC +CPU_1.8V -- OK")
 
     assert len(result['BMC']['sc10']['+CPU_1.8V_S5']) == 5
-    assert result['BMC']['sc10']['+CPU_1.8V_S5'][:2] == '1.'
+    assert result['BMC']['sc10']['+CPU_1.8V_S5'][:2] == '1.' or result['BMC']['sc10']['+CPU_1.8V_S5'][:2] == '2.'
     assert result['BMC']['sc10']['+CPU_1.8V_S5'][2:].isdigit()
     print("Check sc10 BMC +CPU_1.8V_S5 -- OK")
 
     assert len(result['BMC']['sc10']['+CPU_3.3V']) == 5
-    assert result['BMC']['sc10']['+CPU_3.3V'][:2] == '3.'
+    assert result['BMC']['sc10']['+CPU_3.3V'][:2] == '3.' or result['BMC']['sc10']['+CPU_3.3V'][:2] == '2.'
     assert result['BMC']['sc10']['+CPU_3.3V'][2:].isdigit()
     print("Check sc10 BMC +CPU_3.3V -- OK")
 
