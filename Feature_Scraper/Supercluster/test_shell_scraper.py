@@ -25,7 +25,7 @@ if result['CPU']['status'] == 'OK':
 assert 'BIOS' in result
 print('Check BIOS keyword -- OK')
 assert 'status' in result['BIOS']
-if result['status'] == 'OK':
+if result['BIOS']['status'] == 'OK':
     assert 'baseboard-serial-number' in result['BIOS']
     assert type(result['BIOS']['baseboard-serial-number']) == str and len(result['BIOS']['baseboard-serial-number']) > 0
     print('Check BIOS baseboard-serial-number -- OK')
