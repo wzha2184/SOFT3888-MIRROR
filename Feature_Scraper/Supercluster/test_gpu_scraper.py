@@ -48,6 +48,9 @@ assert result[board2]['power'][:-4].isdigit()
 assert result[board2]['power'][-3:].isdigit()
 print("Check power of the 2 GPU boards -- OK")
 
-assert result[board1]['fanSpeed'].isdigit()
-assert result[board2]['fanSpeed'].isdigit()
+valid_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.']
+for c in str(result[board1]['fanSpeed']):
+    assert c in valid_chars
+for c in str(result[board2]['fanSpeed']):
+    assert c in valid_chars
 print("Check fanSpeed of the 2 GPU boards -- OK")
