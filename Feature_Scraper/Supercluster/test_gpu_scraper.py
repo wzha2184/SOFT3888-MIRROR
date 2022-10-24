@@ -32,12 +32,12 @@ print("Check ['Temperature', 'totalMemory', 'limitPower', 'minLimitPower', 'maxL
 
 four_decimal_places_attributes = ['usedMemory', 'freeMemory']
 for f in four_decimal_places_attributes:
-    assert result[board1][o][-5] == '.'
-    assert result[board1][o][:-5].isdigit()
-    assert result[board1][o][-4:].isdigit()
-    assert result[board2][o][-5] == '.'
-    assert result[board2][o][:-5].isdigit()
-    assert result[board2][o][-4:].isdigit()
+    assert result[board1][f][-5] == '.'
+    assert result[board1][f][:-5].isdigit()
+    assert result[board1][f][-4:].isdigit()
+    assert result[board2][f][-5] == '.'
+    assert result[board2][f][:-5].isdigit()
+    assert result[board2][f][-4:].isdigit()
 print("Check usedMemory and freeMemory of the 2 GPU boards -- OK")
 
 assert result[board1]['power'][-4] == '.'
