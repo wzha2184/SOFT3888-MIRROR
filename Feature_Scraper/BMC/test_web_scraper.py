@@ -98,10 +98,10 @@ if result['BMC']['sc10']['status'] == 'OK':
     assert result['BMC']['sc10']['SOC_FAN'].isdigit()
     print("Check sc10 BMC SOC_FAN -- OK")
 
-    assert len(result['BMC']['sc10']['+VBAT']) == 5
-    assert result['BMC']['sc10']['+VBAT'][1] == '.'
-    assert result['BMC']['sc10']['+VBAT'][2:].isdigit()
-    print("Check sc10 BMC +VBAT -- OK")
+    assert len(result['BMC']['sc10']['VBAT']) == 5
+    assert result['BMC']['sc10']['VBAT'][1] == '.'
+    assert result['BMC']['sc10']['VBAT'][2:].isdigit()
+    print("Check sc10 BMC VBAT -- OK")
 
     power_control_options = ['Hard Reset', "Power Off", "Power On", "Power Cycle", "ACPI Shutdown"]
     assert result['BMC']['sc10']['power_control'] in power_control_options
