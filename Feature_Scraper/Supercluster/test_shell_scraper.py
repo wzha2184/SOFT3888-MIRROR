@@ -10,15 +10,15 @@ assert 'status' in result['CPU']
 if result['CPU']['status'] == 'OK':
     valid_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
     assert 'cpu_current_freq' in result['CPU']['cpu_freq']
-    for c in result['CPU']['cpu_freq']['cpu_current_freq']:
+    for c in str(result['CPU']['cpu_freq']['cpu_current_freq']):
         assert c in valid_chars
     print('Check cpu_current_freq -- OK')
     assert 'cpu_min_freq' in result['CPU']['cpu_freq']
-    for c in result['CPU']['cpu_freq']['cpu_min_freq']:
+    for c in str(result['CPU']['cpu_freq']['cpu_min_freq']):
         assert c in valid_chars
     print('Check cpu_min_freq -- OK')
     assert 'cpu_max_freq' in result['CPU']['cpu_freq']
-    for c in result['CPU']['cpu_freq']['cpu_max_freq']:
+    for c in str(result['CPU']['cpu_freq']['cpu_max_freq']):
         assert c in valid_chars
     print('Check cpu_max_freq -- OK')
 
