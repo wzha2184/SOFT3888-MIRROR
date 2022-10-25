@@ -7,21 +7,26 @@ sudo apt-get install git
 # Elixir Installation
 sudo apt-get install elixir
 
+# Erlang Installation
+sudo apt --fix-broken install
+sudo apt-get install erlang
+
+# Install inotify-tools
+apt-get install inotify-tools
+
 # Install PostgreSQL
 sudo apt install postgresql postgresql-contrib
-
-# Python Installation
-sudo apt install python3-pip
-
-# Install Elixir Mix Package
-sudo mix dept.get
-
-# Install Python igpu package
-sudo pip install igpu
+sudo systemctl start postgresql.service
 
 # Install Chrome
 sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo dpkg -i google-chrome-stable_current_amd64.deb
+
+# Python Installation
+sudo apt install python3-pip
+
+# Install Python igpu package
+sudo pip install igpu
 
 # Install Python Selenium package
 sudo pip install selenium

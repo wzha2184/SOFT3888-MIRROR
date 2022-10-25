@@ -5,12 +5,13 @@
   * Updata system by `sudo apt update`
   * First install Git by `sudo apt-get install git`
   * Clone our project repo by `git clone git clone https://Astral_Jason@bitbucket.org/astral_jason/soft3888_tu12_04_re_p39.git` with the password `ATBB8J9vxpLMtdwe4Ak5pdpzBfWp03788AF4`
-  * Run the `vm_setup.sh` to install all the required packages
+  * Go to the root directory of the repository and run `bash vm_setup.sh` to install all the required packages(may require manual confirmation)
+  
 * To setup the supercluster environment:
   * Updata system by `sudo apt update`
   * First install Git by `sudo apt-get install git`
   * Clone our project repo by `git clone git clone https://Astral_Jason@bitbucket.org/astral_jason/soft3888_tu12_04_re_p39.git` with the password `ATBB8J9vxpLMtdwe4Ak5pdpzBfWp03788AF4` to get the required scripts
-  * Run `vm_setup.sh` to install all the required packages
+  * Go to the root directory of the repository and run `bash sc_setup.sh` to install all the required packages(may require manual confirmation)
 
 * [`Elixir`](https://elixir-lang.org/install.html) v1.13.4 Installed
   * [`Elixir`](https://elixir-lang.org/install.html) Installed
@@ -20,9 +21,9 @@
 
 ## To start Dashboard Phoenix server:
   * `cd Dashboard-Contex`
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+  * Install dependencies with `sudo mix deps.get`
+  * Create and migrate your database with `sudo mix ecto.setup`
+  * Start Phoenix endpoint with `sudo mix phx.server` or inside IEx with `iex -S mix phx.server`
 
   Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
