@@ -7,6 +7,9 @@ sudo apt-get install git
 # Elixir Installation
 sudo apt-get install elixir
 
+# Install PostgreSQL
+sudo apt install postgresql postgresql-contrib
+
 # Python Installation
 sudo apt install python3-pip
 
