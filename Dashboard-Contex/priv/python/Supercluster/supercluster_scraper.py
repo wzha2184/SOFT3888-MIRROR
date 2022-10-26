@@ -24,6 +24,8 @@ def run_supercluster_scraper(username: str, password: str, url_config: str) -> d
 
         result = {"GPU": {}, "CPU": {}, "BIOS": {}}
         superclusters = config["superclusters"]
+        project_path = config["project_path"]
+
         for sc in superclusters.keys():
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -37,8 +39,11 @@ def run_supercluster_scraper(username: str, password: str, url_config: str) -> d
             try:
                 ssh.connect(superclusters[sc]["IP"], username=username, password=password, timeout=4)
 
-                path = "soft3888_tu12_04_re_p39/Feature_Scraper/Supercluster"
-                command = "cd {path}; echo 6r7mYcxLHXLq8Rgu | sudo -S -k python3 supercluster_scraper.py".format(path=path)
+                # path = "soft3888_tu12_04_re_p39/Feature_Scraper/Supercluster"
+                # command = "cd {path}; echo 6r7mYcxLHXLq8Rgu | sudo -S -k python3 supercluster_scraper.py".format(path=path)
+                
+                command = "cd {path}; echo 6r7mYcxLHXLq8Rgu | sudo -S -k python3 supercluster_scraper.py".format(path=project_path)
+
                 ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command, timeout=4)
 
                 str_result = ssh_stdout.read().decode('utf-8').replace("\'", "\"")
