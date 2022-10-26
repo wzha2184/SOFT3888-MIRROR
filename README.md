@@ -4,20 +4,18 @@
 * To setup the virtual machine which will run the Strong Data Centre:
   * Updata system by `sudo apt update`
   * First install Git by `sudo apt-get install git`
-  * Clone our project repo by `git clone git clone https://Astral_Jason@bitbucket.org/astral_jason/soft3888_tu12_04_re_p39.git` with the password `ATBB8J9vxpLMtdwe4Ak5pdpzBfWp03788AF4`
-  * Go to the root directory of the repository and run `bash vm_setup.sh` to install all the required packages(may require manual confirmation)
+  * Clone our project repo by `git clone git clone https://Astral_Jason@bitbucket.org/astral_jason/soft3888_tu12_04_re_p39.git` with the password `ATBB8J9vxpLMtdwe4Ak5pdpzBfWp03788AF4` if you don't have one
+  * Go to the root directory of the project repository and run `bash vm_setup.sh` to install all the required packages(may require manual confirmation)
   
 * To setup the supercluster environment:
   * Updata system by `sudo apt update`
   * First install Git by `sudo apt-get install git`
-  * Clone our project repo by `git clone git clone https://Astral_Jason@bitbucket.org/astral_jason/soft3888_tu12_04_re_p39.git` with the password `ATBB8J9vxpLMtdwe4Ak5pdpzBfWp03788AF4` to get the required scripts
-  * Go to the root directory of the repository and run `bash sc_setup.sh` to install all the required packages(may require manual confirmation)
+  * Clone our project repo by `git clone git clone https://Astral_Jason@bitbucket.org/astral_jason/soft3888_tu12_04_re_p39.git` with the password `ATBB8J9vxpLMtdwe4Ak5pdpzBfWp03788AF4` if you don't have one to get the required scripts
+  * Go to the root directory of the project repository and run `bash sc_setup.sh` to install all the required packages(may require manual confirmation)
 
-* [`Elixir`](https://elixir-lang.org/install.html) v1.13.4 Installed
-  * [`Elixir`](https://elixir-lang.org/install.html) Installed
-  * Setup [`PostgreSQL`](https://www.postgresql.org/download/) and start [`PostgreSQL`](https://www.postgresql.org/) server
-  * `Python 3.6+` Installed
-    * python dependencies installed
+* Tips:
+  * To capture the GPU features, at least Nvidia-driver should be installed
+  * BMC features update will be slower than other features since it is realized by web scraping
 
 ## To start Dashboard Phoenix server:
   * `cd Dashboard-Contex`

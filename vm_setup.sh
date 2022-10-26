@@ -46,6 +46,12 @@ sudo pip install subprocess.run
 # Install Python paramiko package
 sudo pip install paramiko
 
+# Install Python webdriver-manager package
+sudo pip install webdriver-manager
+
+# Install Python packaging package
+sudo pip install packaging
+
 # Install Python discord package
 sudo pip install discord
 

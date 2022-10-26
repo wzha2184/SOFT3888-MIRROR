@@ -8,5 +8,6 @@
             "IP": "192.168.10.10",
             "BMC": "https://192.168.10.120"
         }
-    }
+    },
+    "project_path": "soft3888_tu12_04_re_p39/Feature_Scraper/Supercluster"
 }
