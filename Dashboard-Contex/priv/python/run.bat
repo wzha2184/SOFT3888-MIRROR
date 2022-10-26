@@ -1,1 +1,0 @@
-python3 run.py usyd-10a 6r7mYcxLHXLq8Rgu config.json
