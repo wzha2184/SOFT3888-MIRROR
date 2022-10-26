@@ -131,7 +131,7 @@ class WebScraper:
         info = soup.find_all("div")
         for div in info:
             if div.get("class") is not None and len(div.get("class")) >= 2:
-                if div.get("class")[0] == "iradio_square-blue" and div.get("class")[1] == "checked":
+                if div.get("class")[0] == "iradio_square-blue" and div.get("class")[1] == "disabled":
                     power = power_selection[div.input.get("id")]
                     self.result["power_control"] = power
 
