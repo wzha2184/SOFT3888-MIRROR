@@ -6,7 +6,7 @@
   * First install Git by `sudo apt-get install git`
   * Clone our project repo by `git clone git clone https://Astral_Jason@bitbucket.org/astral_jason/soft3888_tu12_04_re_p39.git` with the password `ATBB8J9vxpLMtdwe4Ak5pdpzBfWp03788AF4` if you don't have one
   * Go to the root directory of the project repository and run `bash vm_setup.sh` to install all the required packages(may require manual confirmation)
-  
+
 * To setup the supercluster environment:
   * Updata system by `sudo apt update`
   * First install Git by `sudo apt-get install git`
