@@ -16,6 +16,11 @@
 * Tips:
   * To capture the GPU features, at least Nvidia-driver should be installed
   * BMC features update will be slower than other features since it is realized by web scraping
+  * Alert Bot server and channel link: https://discord.gg/Gg38kTBNCD
+   If you want to use your own BOT:
+   1. Open Dashboard-Contex/priv/python/alertBOT.py
+   2. Change “token” to your token and change “channel_ID” to your channel ID
+
 
 ## To start Dashboard Phoenix server:
   * `cd Dashboard-Contex`
