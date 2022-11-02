@@ -12,7 +12,8 @@ config :dashboard,
 
 # Configures the endpoint
 config :dashboard, DashboardWeb.Endpoint,
-  url: [host: "localhost"],
+  # url: [host: "localhost"],
+  url: [port: 4000, ip: {192,168,10,92}],
   render_errors: [view: DashboardWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Dashboard.PubSub,
   live_view: [signing_salt: "IEIluXNW"]
